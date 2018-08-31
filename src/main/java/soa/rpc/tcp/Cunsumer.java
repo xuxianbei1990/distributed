@@ -18,7 +18,6 @@ public class Cunsumer {
 		Object[] arguments = {"hello"};
 		
 		Socket socket = new Socket("127.0.0.1", 1234);
-		
 		ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 		
 		output.writeUTF(interfacename);
@@ -32,7 +31,6 @@ public class Cunsumer {
 			Object result = input.readObject();
 			System.out.println(result);
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
