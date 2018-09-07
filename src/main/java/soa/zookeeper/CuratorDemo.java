@@ -90,7 +90,7 @@ public class CuratorDemo {
 	 * TreeCache 综合PatchChildCache 和 NodeCache特性
 	 */
 	public static void testWatcher(CuratorFramework curatorFramework, String path) {
-		NodeCache nodeCache = new NodeCache(curatorFramework, path, false);
+		final NodeCache nodeCache = new NodeCache(curatorFramework, path, false);
 		NodeCacheListener nodeCacheListener = new NodeCacheListener(){
 
 			@Override
