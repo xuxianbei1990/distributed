@@ -5,13 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
-class ReentrantLockDemo {
+class ReentrantLockDemo1 {
 	private static ReentrantLock lock = new ReentrantLock();
 	private static Map<String, String> maps = new HashMap<String, String>();
 	private static CountDownLatch latch = new CountDownLatch(102);
@@ -99,7 +98,7 @@ public class ReentrantReadWriteLockDemo {
 		latch.await();
 		long endTime = System.currentTimeMillis();
 		System.out.println("Consume Time is:" + (endTime - beginTime) + " ms");
-		ReentrantLockDemo.main();
+		ReentrantLockDemo1.main();
 	}
 
 	static class WriteThread implements Runnable {

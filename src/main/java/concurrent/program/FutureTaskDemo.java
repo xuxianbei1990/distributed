@@ -5,12 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 // FutureTask执行多任务计算的使用场景
@@ -23,7 +18,7 @@ class FutureTaskForMultiCompute {
 		ExecutorService exec = Executors.newFixedThreadPool(5);
 
 		for (int i = 0; i < 10; i++) {
-			FutureTask<Integer> ft = new FutureTask<Integer>(inst.new ComputeTask(i, "" + i));
+			FutureTask<Integer> ft = new FutureTask<>(inst.new ComputeTask(i, "" + i));
 			taskList.add(ft);
 			// 提交给线程池执行任务， 也可以通过exec.invokeAll(taskList)一次性提交所有任务;
 			exec.submit(ft);
@@ -159,5 +154,27 @@ class NewConnection {
 }
 
 public class FutureTaskDemo {
+
+	static void test() {
+		ExecutorService executorService =  Executors.newFixedThreadPool(1);
+		Future<String> futureTask = executorService.submit(new Callable<String>() {
+			@Override
+			public String call() {
+				return "tt";
+			}
+		});
+		try {
+			System.out.println(futureTask.get());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		executorService.shutdown();
+	}
+
+	public static void main(String[] args) {
+		test();
+	}
 
 }

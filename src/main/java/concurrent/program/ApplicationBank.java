@@ -1,12 +1,14 @@
 package concurrent.program;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class Bank {
 
 	private static int money = 10000;
 
 	public int getMoney() {
+		AtomicInteger integer;
 		synchronized (this) {
 			return money;
 		}
