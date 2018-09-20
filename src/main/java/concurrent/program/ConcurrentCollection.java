@@ -13,6 +13,7 @@ public class ConcurrentCollection {
         ConcurrentLinkedQueue clq;
         LinkedBlockingQueue lbq;
         ArrayBlockingQueue abq;
+        CountDownLatch cdl2;
 
         ExecutorService threadService =  Executors.newFixedThreadPool(10);
         threadService.submit(new Runnable() {

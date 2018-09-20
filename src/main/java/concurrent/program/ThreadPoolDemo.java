@@ -177,13 +177,13 @@ public class ThreadPoolDemo {
 	}
 
 	void testThreadPool(ExecutorService threadPool) {
-		for (int i = 1; i < 5; i++) {
+		for (int i = 0; i < 8; i++) {
 			final int taskID = i;
 			threadPool.execute(new Runnable() {
 				public void run() {
 					for (int i = 1; i < 5; i++) {
 						try {
-							Thread.sleep(20);
+							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -222,10 +222,13 @@ public class ThreadPoolDemo {
 		ThreadPoolDemo tpd = new ThreadPoolDemo();
 		// 可重用固定线程集合的线程池，以共享的无界队列方式来运行这些线程
 		// 创建可以容纳3个线程的线程池
+		tpd.testThreadPool(new ThreadPoolExecutor(3, 5,
+				1000L, TimeUnit.MILLISECONDS,
+				new LinkedBlockingQueue<Runnable>(2)));
 //		 tpd.testThreadPool(Executors.newFixedThreadPool(3));
 		// 创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们
 		// 线程池的大小会根据执行的任务数动态分配
-//		 tpd.testThreadPool(Executors.newCachedThreadPool());
+		 tpd.testThreadPool(Executors.newCachedThreadPool());
 		// 创建一个使用单个 worker 线程的 Executor，以无界队列方式来运行该线程
 		// 创建单个线程的线程池，如果当前线程在执行任务时突然中断，则会创建一个新的线程替
 		// tpd.testThreadPool(Executors.newSingleThreadExecutor());
@@ -237,7 +240,7 @@ public class ThreadPoolDemo {
 //		ThreadInfo.beginTime = System.currentTimeMillis();
 //		threadInfo.start();
 		
-		SemaphoreTest.mainTest(args);
+//		SemaphoreTest.mainTest(args);
 	}
 
 }
