@@ -5,11 +5,13 @@ import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 
-public class ConcurrentCollection {
+public class ConcurrentCollection  {
 
     static void BaseMap() {
         HashSet<String> set;
-        ConcurrentHashMap chm;
+        ConcurrentHashMap chm = new ConcurrentHashMap();
+        chm.put("str", "1");
+        chm.size();
         ConcurrentLinkedQueue clq;
         LinkedBlockingQueue lbq;
         ArrayBlockingQueue abq;

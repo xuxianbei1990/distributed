@@ -1,8 +1,9 @@
-package concurrent.program;
+package concurrent.program.minotor;
 
 import java.util.concurrent.*;
 
 /**
+ * http://lixiaohui.iteye.com/blog/2330086
  * 监控线程池
  * User: xuxb
  * Date: 2018-09-14
