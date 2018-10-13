@@ -11,7 +11,8 @@ import java.io.*;
  * Time: 21:31
  * Version:V1.0
  */
-public class Student {
+public class StudentSerializable implements Serializable {
+    private static final long serialVersionUID = 5658123318116939952L;
 
     @Protobuf(fieldType = FieldType.STRING)
     private String name;
@@ -22,7 +23,7 @@ public class Student {
 
     private Teacher teacher;
 
-    public Student() {
+    public StudentSerializable() {
         teacher = new Teacher();
     }
 
@@ -50,14 +51,14 @@ public class Student {
         this.age = age;
     }
 
-    public Student deepClone() {
+    public StudentSerializable deepClone() {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try (ObjectOutputStream oos = new ObjectOutputStream(byteArrayOutputStream)) {
             oos.writeObject(this);
 
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-            return (Student) objectInputStream.readObject();
+            return (StudentSerializable) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return null;

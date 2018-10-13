@@ -4,7 +4,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-/**
+/**  广播客户端
  * User: xuxb
  * Date: 2018-09-23
  * Time: 7:11

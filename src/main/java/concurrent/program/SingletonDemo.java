@@ -54,11 +54,19 @@ class MutiThreadDispatch {
 }
 
 //最好的单例模式
+/*
+1.线程安全
+2.防止反序列化破坏
+https://blog.csdn.net/More_World/article/details/82560949
+ */
 enum EasySingleton {
     INSTANCE;
-
-    public void main() {
-        System.out.println("1");
+    private SingletonDemo singletonDemo = null;
+    private EasySingleton() {
+        singletonDemo = new SingletonDemo();
+    }
+    public SingletonDemo getSingletonDemo() {
+        return singletonDemo;
     }
 }
 

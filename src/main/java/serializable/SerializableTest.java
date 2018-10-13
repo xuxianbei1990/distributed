@@ -77,7 +77,7 @@ public class SerializableTest {
     }
 
     private static void executeHessian(int testCount) throws IOException {
-        Student student = getStudent();
+        StudentSerializable student = getStudent2();
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         HessianOutput ho = new HessianOutput(os);
@@ -93,16 +93,24 @@ public class SerializableTest {
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray());
         HessianInput hessianInput = new HessianInput(byteArrayInputStream);
-        Student student1 = (Student) hessianInput.readObject();
+        StudentSerializable student1 = (StudentSerializable) hessianInput.readObject();
         System.out.println(student1);
     }
 
 
     private static void deepCloneTest() {
-        Student student = getStudent();
-        Student student1 = student.deepClone();
+        StudentSerializable student = getStudent2();
+        StudentSerializable student1 = student.deepClone();
         student1.getTeacher().setName("仙灵");
         System.out.println(student + "::" + student1);
+    }
+
+    private static StudentSerializable getStudent2() {
+        StudentSerializable student = new StudentSerializable();
+        student.setName("许贤贝");
+        student.setAge(28);
+        student.getTeacher().setName("璐璐");
+        return student;
     }
 
     private static Student getStudent() {
