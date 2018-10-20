@@ -47,7 +47,7 @@ class TestOutputAccout extends Thread {
 			lock.lock();
 			System.out.println("出锁");
 			try {
-				Thread.currentThread().sleep(2000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -79,7 +79,7 @@ class testInterruptibly implements Runnable {
 			try {
 				// 如果调用Interruptibly() ;那么该线程会立即中断
 				lock.lockInterruptibly();
-				Thread.currentThread().sleep(3000);
+				Thread.sleep(3000);
 				str = "lockInterruptibly";
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -92,7 +92,7 @@ class testInterruptibly implements Runnable {
 				lock.lock();
 				str = "lock";
 				try {
-					Thread.currentThread().sleep(3000);
+					Thread.sleep(3000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -122,7 +122,7 @@ class TestLock implements Runnable {
 		try {
 			lock.lock();
 			try {
-				Thread.currentThread().sleep(100 * index);
+				Thread.sleep(100 * index);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -166,7 +166,7 @@ class TestTryLock implements Runnable {
 			// 如果已经被lock，尝试等待5s，看是否可以获得锁，如果5s后仍然无法获得锁则返回false继续执行
 			if (lock.tryLock(timeInterval, TimeUnit.SECONDS)) {
 				try {
-					Thread.currentThread().sleep(1000);
+					Thread.sleep(1000);
 				} finally {
 					lock.unlock();
 				}
@@ -186,7 +186,7 @@ class TestTryLock implements Runnable {
 				System.out.println("我被锁住了");
 				str = "解锁";
 				try {
-					Thread.currentThread().sleep(1000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

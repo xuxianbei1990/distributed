@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 
 public class ConcurrentCollection  {
 
-    static void BaseMap() {
+    static void baseMap() {
         HashSet<String> set;
         ConcurrentHashMap chm = new ConcurrentHashMap();
         chm.put("str", "1");
@@ -60,7 +60,7 @@ public class ConcurrentCollection  {
 //        readLock.unlock();
     }
 
-    static void BaseLock() {
+    static void baseLock() {
         ReentrantReadWriteLock rrwl = new ReentrantReadWriteLock();
         ReadLock readLock = rrwl.readLock();
         ReentrantReadWriteLock.WriteLock wl = rrwl.writeLock();
@@ -86,7 +86,7 @@ public class ConcurrentCollection  {
         System.out.println(1 << 16 >>> 16);
         System.out.println(1 << 16 & ((1 << 16) - 1));
         System.out.println(1 >>> 16);
-        BaseMap();
+        baseMap();
     }
 
 }

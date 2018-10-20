@@ -10,8 +10,12 @@ public class ThreadExceptionRun {
 
     public static void main(String[] args) {
         Thread thread = new Thread(() -> {
-            Integer i = Integer.parseInt("ss");
-            System.out.println(i);
+//            try {
+                Integer i = Integer.parseInt("ss");
+                System.out.println(i);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         });
         thread.setUncaughtExceptionHandler(new ThreadExcepiton());
         thread.start();

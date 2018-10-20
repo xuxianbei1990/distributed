@@ -10,11 +10,13 @@ class Babble extends Thread {
 		cs = whatToSay.toCharArray();
 	}
 
+	@Override
 	public void run() {
 			for (char c : cs) {
 				System.out.print(this.getName() + ":" + c);
-				if (doYield)
+				if (doYield) {
 					Thread.yield();// 重新让自己处于（就绪状态） 让步
+				}
 			}
 		
 	}
@@ -30,8 +32,9 @@ public class ThreadDemo2 {
 		String[] strs = { "abc", "DidNot" };
 		Babble.doYield = new Boolean("true").booleanValue();
 		Babble.howOften = Integer.parseInt(args[1]);
-		for (int i = 2; i < 4; i++)
+		for (int i = 2; i < 4; i++) {
 			new Babble(strs[i % 2]).start();
+		}
 
 	}
 

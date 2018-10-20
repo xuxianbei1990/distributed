@@ -17,10 +17,10 @@ class MutiThread {
     private MutiThread() {
     }
 
-    private static final MutiThread oneThread = new MutiThread();
+    private static final MutiThread ONETHREAD = new MutiThread();
 
     public static MutiThread GetInstance() {
-        return oneThread;
+        return ONETHREAD;
     }
 
 }
