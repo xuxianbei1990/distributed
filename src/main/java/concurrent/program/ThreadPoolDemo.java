@@ -232,7 +232,7 @@ public class ThreadPoolDemo {
 		 tpd.testThreadPool(Executors.newCachedThreadPool());
 		// 创建一个使用单个 worker 线程的 Executor，以无界队列方式来运行该线程
 		// 创建单个线程的线程池，如果当前线程在执行任务时突然中断，则会创建一个新的线程替
-		// tpd.testThreadPool(Executors.newSingleThreadExecutor());
+//		 tpd.testThreadPool(Executors.newSingleThreadExecutor());
 		// 创建一个可安排在给定延迟后运行命令或者定期地执行的线程池。
 		// 效果类似于Timer定时器
 //		 tpd.testSchedulePool(Executors.newScheduledThreadPool(3));

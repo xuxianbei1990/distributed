@@ -7,7 +7,7 @@ public class SayHelloServiceImpl implements SayHelloService {
 
 	@Override
 	public String sayHello(String helloAry) {
-		if (helloAry.equals("hello")) {
+		if ("hello".equals(helloAry)) {
 			return "hello";
 		} else {
 			return "bye bye";

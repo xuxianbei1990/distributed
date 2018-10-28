@@ -41,8 +41,6 @@ public class FlowIdWorker {
     }
 
 
-
-
     public static void main(String[] args) {
         getJdkUUID();
         getlog4jUUID();

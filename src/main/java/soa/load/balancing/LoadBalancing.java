@@ -8,7 +8,9 @@ import java.util.Set;
 
 /**
  * 负载均衡
- * 
+ * 1. 轮询，2.随机，3.hash，4. 权重轮询, 5.最小连接数，6.最快响应
+ * 「健康探测」 ：http；tcp；udp；
+ * https://mp.weixin.qq.com/s/1H-X0iOGAYa-ysrPQFgojw
  * @author xuxb
  *
  */
@@ -38,11 +40,11 @@ public class LoadBalancing {
 	 */
 	public static String testRoundRobin() {
 
-		Map<String, Integer> serverMap = new HashMap<String, Integer>();
+		Map<String, Integer> serverMap = new HashMap<>();
 		serverMap.putAll(serverWeightMap);
 
 		Set<String> keySet = serverMap.keySet();
-		ArrayList<String> keyList = new ArrayList<String>();
+		ArrayList<String> keyList = new ArrayList<>();
 		keyList.addAll(keySet);
 
 		String server = null;
@@ -62,12 +64,12 @@ public class LoadBalancing {
 	 * @return
 	 */
 	public static String testRandom() {
-		Map<String, Integer> serverMap = new HashMap<String, Integer>();
+		Map<String, Integer> serverMap = new HashMap<>();
 		serverMap.putAll(serverWeightMap);
 		
 		//取得Ip地址list
 		Set<String> keySet = serverMap.keySet();
-		ArrayList<String> keyList = new ArrayList<String>();
+		ArrayList<String> keyList = new ArrayList<>();
 		keyList.addAll(keySet);
 		Random random = new Random();
 		int randomPos = random.nextInt(keyList.size());

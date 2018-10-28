@@ -1,18 +1,12 @@
 package soa;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
 import com.caucho.hessian.io.HessianProtocolException;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SerializeDemo {
 
@@ -26,8 +20,9 @@ public class SerializeDemo {
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		ObjectOutputStream out = new ObjectOutputStream(os);
-		for (Person object : objects)
-			out.writeObject(object);
+		for (Person object : objects) {
+            out.writeObject(object);
+        }
 		byte[] zhanSanByte = os.toByteArray();
 		System.out.print("java   :" + zhanSanByte.length + "--");
 
@@ -53,8 +48,9 @@ public class SerializeDemo {
 	static void testHessian(List<Person> objects) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		Hessian2Output ho = new Hessian2Output(os);
-		for (Person object : objects)
-			ho.writeObject(object);
+		for (Person object : objects) {
+            ho.writeObject(object);
+        }
 		byte[] zhanSanByte = os.toByteArray();
 		System.out.print("Hession:" + zhanSanByte.length + "--");
 

@@ -1,6 +1,7 @@
 package serializable;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.caucho.hessian.io.HessianInput;
@@ -10,6 +11,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: xuxb
@@ -20,6 +23,8 @@ import java.io.IOException;
 public class SerializableTest {
 
     public static void main(String[] args) throws IOException {
+        serizlizerList();
+
 //        deepCloneTest();
         int testCount = 100;
         // 数量小时候 性能高于fastjson
@@ -30,6 +35,18 @@ public class SerializableTest {
         executeProtobuf(testCount);
         // 性能更高，但是消耗的空间更大。
         executeHessian(testCount);
+
+    }
+
+    private static void serizlizerList() {
+        List<Student> list = new ArrayList<>();
+        List<Student> list2;
+        for (int i = 0; i < 5; i++) {
+            list.add(getStudent());
+        }
+        String str = JSONObject.toJSONString(list);
+        list2 = JSONObject.parseArray(str, Student.class);
+        System.out.println(list2.toString());
     }
 
     private static void executeFastjson(int testCount) throws IOException {
