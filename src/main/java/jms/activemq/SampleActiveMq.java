@@ -1,20 +1,9 @@
 package jms.activemq;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.jms.Topic;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
-
 import system.config.ServerConfig;
+
+import javax.jms.*;
 
 public class SampleActiveMq {
 	private static final String ACTIVEMQADDRESS = "tcp://" + ServerConfig.SERVER_IP + ":61616"; 

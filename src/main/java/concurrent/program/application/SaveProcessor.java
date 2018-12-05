@@ -15,7 +15,7 @@ public class SaveProcessor extends  Thread implements RequestProcessor {
     public void run() {
         while (true) {
             try {
-                //没有会阻塞，poll 直接返回，remove 没有会异常
+                //take没有会阻塞，poll 直接返回，remove 没有会异常
                 Request request = linkedBlockingQueue.take();
                 System.out.println("save data:" + request.getName());
             } catch (InterruptedException e) {

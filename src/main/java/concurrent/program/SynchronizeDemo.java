@@ -7,18 +7,24 @@ package concurrent.program;
  * Version:V1.0
  */
 public class SynchronizeDemo {
-    private  static SynchronizeDemo synchronizeDemo = null;
+    private static SynchronizeDemo synchronizeDemo = null;
+
+    public void test2() {
+        synchronized (this) {
+            System.out.println("1");
+        }
+    }
 
     public void test() {
         //作用域是对象
         synchronized (this) {
             System.out.println("1");
-
+            test2();
         }
     }
 
     //作用域是类
-    public static  SynchronizeDemo GetInstance() {
+    public static SynchronizeDemo GetInstance() {
         if (synchronizeDemo == null) {
             synchronizeDemo = new SynchronizeDemo();
         }
