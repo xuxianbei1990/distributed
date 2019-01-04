@@ -11,7 +11,7 @@ import org.apache.solr.common.SolrInputDocument;
 import java.io.IOException;
 import java.util.List;
 
-/**
+/**  Solr 对已有的数据检索效率较高
  * User: xuxb
  * Date: 2018-10-17
  * Time: 20:07
@@ -39,6 +39,7 @@ public class SolrUtil {
     往索引添加文档
      */
     public void addDoc() throws IOException, SolrServerException {
+        // 类似于表的概念
         SolrInputDocument document = new SolrInputDocument();
         document.addField("id", "8");
         document.addField("name", "简单");
