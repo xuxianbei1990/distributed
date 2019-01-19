@@ -20,4 +20,10 @@ public class ServerConfig {
     // activeMa 地址
     public static final String ACTIVEMQADDRESS = "tcp://" + ServerConfig.SERVER_IP + ":61616";
 
+    public static void main(String[] args) {
+        Integer i = 1000;
+        Integer j = 1000;
+        System.out.println(i.hashCode() == j.hashCode());
+    }
+
 }
