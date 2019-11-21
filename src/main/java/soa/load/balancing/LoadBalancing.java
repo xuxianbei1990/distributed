@@ -22,7 +22,7 @@ public class LoadBalancing {
 	 * 本来是配置数据库的
 	 */
 	public void roundRobin() {
-		serverWeightMap = new HashMap<String, Integer>();
+		serverWeightMap = new HashMap<>();
 		serverWeightMap.put("192.168.1.100", 1);
 		serverWeightMap.put("192.168.1.101", 1);
 
@@ -40,7 +40,7 @@ public class LoadBalancing {
 	 */
 	public static String testRoundRobin() {
 
-		Map<String, Integer> serverMap = new HashMap<>();
+		Map<String, Integer> serverMap = new HashMap<>(8);
 		serverMap.putAll(serverWeightMap);
 
 		Set<String> keySet = serverMap.keySet();
