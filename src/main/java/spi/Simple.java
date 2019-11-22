@@ -1,8 +1,6 @@
 package spi;
 
-import study.dubbo.spi.DatabaseDriver;
-
-import java.util.ServiceLoader;
+//import study.dubbo.spi.DatabaseDriver;
 
 /**
  * Name
@@ -14,9 +12,9 @@ import java.util.ServiceLoader;
  */
 public class Simple {
     public static void main(String[] args) {
-        ServiceLoader<DatabaseDriver> serviceLoader = ServiceLoader.load(DatabaseDriver.class);
-        for (DatabaseDriver databaseDriver : serviceLoader) {
-            System.out.println(databaseDriver.connect("我来测试了"));
-        }
+//        ServiceLoader<DatabaseDriver> serviceLoader = ServiceLoader.load(DatabaseDriver.class);
+//        for (DatabaseDriver databaseDriver : serviceLoader) {
+//            System.out.println(databaseDriver.connect("我来测试了"));
+//        }
     }
 }
