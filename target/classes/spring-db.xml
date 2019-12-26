@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+">
+    <context:component-scan base-package="db.distributed.transactional"></context:component-scan>
+    <bean id="txCurrent" class="org.objectweb.jotm.Current"></bean>
+
+    <!-- 使用xapool配置支持xa的资源（mysql数据库）连接池 -->
+    <bean id="xaCollegeDataSource" class="org.enhydra.jdbc.pool.StandardXAPoolDataSource" destroy-method="shutdown">
+        <property name="dataSource">
+            <!-- 定义支持mysql的xa数据源 -->
+            <bean class="org.enhydra.jdbc.standard.StandardXADataSource" destroy-method="shutdown">
+                <property name="driverName" value="com.mysql.jdbc.Driver"></property>
+                <property name="url" value="jdbc:mysql://localhost:3306/college?useSSL=true&amp;serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;
+                zeroDateTimeBehavior=convertToNull&amp;allowMultiQueries=true"></property>
+                <!-- 注意用户名密码不能配在这里 否则无法读取 -->
+                <!-- 注册到txCurrent -->
+                <property name="transactionManager" ref="txCurrent"></property>
+            </bean>
+
+        </property>
+        <property name="user" value="root"></property>
+        <property name="password" value="123456"></property>
+    </bean>
+    <bean id="mysqlJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="xaCollegeDataSource"/>
+    </bean>
+
+    <!-- 使用xapool配置支持xa的资源（oracle数据库）连接池 -->
+    <bean id="xaCollegeGoodsDataSource" class="org.enhydra.jdbc.pool.StandardXAPoolDataSource" destroy-method="shutdown">
+        <property name="dataSource">
+            <!-- 定义支持mysql的xa数据源 -->
+            <bean class="org.enhydra.jdbc.standard.StandardXADataSource" destroy-method="shutdown">
+                <property name="driverName" value="com.mysql.jdbc.Driver"></property>
+                <property name="url" value="jdbc:mysql://localhost:3306/college_goods?useSSL=true&amp;serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;
+                zeroDateTimeBehavior=convertToNull&amp;allowMultiQueries=true"></property>
+                <!-- 注意用户名密码不能配在这里 否则无法读取 -->
+                <!-- 注册到txCurrent -->
+                <property name="transactionManager" ref="txCurrent"></property>
+            </bean>
+        </property>
+        <property name="user" value="root"></property>
+        <property name="password" value="123456"></property>
+    </bean>
+    <bean id="collegeGoodsJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="xaCollegeGoodsDataSource"/>
+    </bean>
+
+
+    <!-- 配置jta事务  userTransaction必须将所有的数据源（RM）注册到txCurrent中-->
+    <bean id="springTransactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+        <property name="userTransaction" ref="txCurrent"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="springTransactionManager"/>
+</beans>
