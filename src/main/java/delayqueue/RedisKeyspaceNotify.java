@@ -1,10 +1,8 @@
 package delayqueue;
 
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
-import redis.clients.jedis.Protocol;
 
 /**
  * Name redis的 键值空间
@@ -19,17 +17,16 @@ import redis.clients.jedis.Protocol;
  * <p>
  * 缺点：Redis的发布/订阅目前是即发即弃(fire and forget)模式的，因此无法实现事件的可靠通知
  * 。也就是说，如果发布/订阅的客户端断链之后又重连，则在客户端断链期间的所有事件都丢失了。
- *
  */
 public class RedisKeyspaceNotify {
     private static final String ADDRESS = "192.168.2.2";
     int port = 6379;
     JedisPool jedisPool;
 
-    {
-        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
-        jedisPool = new JedisPool(poolConfig, ADDRESS, port, Protocol.DEFAULT_TIMEOUT, "123456");
-    }
+//    {
+//        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+//        jedisPool = new JedisPool(poolConfig, ADDRESS, port, Protocol.DEFAULT_TIMEOUT, "123456");
+//    }
 
     class RedisSub extends JedisPubSub {
         @Override

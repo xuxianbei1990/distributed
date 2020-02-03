@@ -1,5 +1,7 @@
 package lock.reentrant.un;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /*
  * 我们可以看到Synchronized关键字是可重入锁。
  */
@@ -22,6 +24,8 @@ public class SynchronizedDemo {
 		SynchronizedDemo synchronizedDemo = new SynchronizedDemo();
 		SynchronizedDemo.Widget widget = synchronizedDemo.new LoggingWidget();
 		widget.doSomething();
+
+		ConcurrentHashMap concurrentHashMap;
 	}
 
 }

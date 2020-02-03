@@ -11,8 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @author xuxb
  * Date 2018-12-05
  * VersionV1.0
- * @description
- * https://mp.weixin.qq.com/s/5CbjktmOIEMAPLmVgouHIg 这个也不错
+ * @description https://mp.weixin.qq.com/s/5CbjktmOIEMAPLmVgouHIg 这个也不错
  */
 @Slf4j
 public class RateLimiterExample {
@@ -21,7 +20,24 @@ public class RateLimiterExample {
      */
     private static final RateLimiter RATE_LIMITER = RateLimiter.create(5);
 
+    public static String testStr() {
+        String str = "hello";
+        try {
+            return str;
+        } finally {
+            str = "222";
+        }
+    }
+
     public static void main(String[] args) {
+        System.out.print(testStr());
+
+//        testLimiter();
+    }
+
+    private static void testLimiter() {
+        ThreadLocal threadLoca = new ThreadLocal();
+        threadLoca.set("kkkk");
         // 模拟有100个请求
         for (int i = 0; i < 100; i++) {
             // 尝试从令牌桶中获取令牌，若获取不到则等待300毫秒看能不能获取到

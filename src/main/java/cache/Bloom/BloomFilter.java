@@ -26,7 +26,7 @@ public class BloomFilter {
     private final int[] seeds = new int[]{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53};
 
     /**
-     * @param count          预期处理的数据规模，如预期用于处理1百万数据的查重，这里则填写1000000
+     * @param count         预期处理的数据规模，如预期用于处理1百万数据的查重，这里则填写1000000
      * @param autoClearRate 自动清空过滤器内部信息的使用比率，传null则表示不会自动清理，
      *                      当过滤器使用率达到100%时，则无论传入什么数据，都会认为在数据已经存在了
      *                      当希望过滤器使用率达到80%时自动清空重新使用，则传入0.8
@@ -127,13 +127,20 @@ public class BloomFilter {
     }
 
     public static void main(String[] args) {
-        BloomFilter fileter = new BloomFilter(10000, null);
-        System.out.println(fileter.setNX("1111111111111"));
-        System.out.println(fileter.setNX("2222222222222222"));
-        System.out.println(fileter.setNX("3333333333333333"));
-        System.out.println(fileter.setNX("444444444444444"));
-        System.out.println(fileter.setNX("5555555555555"));
-        System.out.println(fileter.setNX("6666666666666"));
-        System.out.println(fileter.setNX("1111111111111"));
+        BitSet bitSet = new BitSet();
+        for (int i = 0; i < 3; i++) {
+            bitSet.set(i);
+        }
+        System.out.print(bitSet.size());
+
+
+//        BloomFilter fileter = new BloomFilter(10000, null);
+//        System.out.println(fileter.setNX("1111111111111"));
+//        System.out.println(fileter.setNX("2222222222222222"));
+//        System.out.println(fileter.setNX("3333333333333333"));
+//        System.out.println(fileter.setNX("444444444444444"));
+//        System.out.println(fileter.setNX("5555555555555"));
+//        System.out.println(fileter.setNX("6666666666666"));
+//        System.out.println(fileter.setNX("1111111111111"));
     }
 }
