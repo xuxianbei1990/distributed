@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: javax.transaction:jta:1.0.1B">
     <CLASSES>
-      <root url="jar://D:/Repository/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar!/" />
+      <root url="jar://E:/Java/Study/repository/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://D:/Repository/javax/transaction/jta/1.0.1B/jta-1.0.1B-javadoc.jar!/" />
+      <root url="jar://E:/Java/Study/repository/javax/transaction/jta/1.0.1B/jta-1.0.1B-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://D:/Repository/javax/transaction/jta/1.0.1B/jta-1.0.1B-sources.jar!/" />
+      <root url="jar://E:/Java/Study/repository/javax/transaction/jta/1.0.1B/jta-1.0.1B-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

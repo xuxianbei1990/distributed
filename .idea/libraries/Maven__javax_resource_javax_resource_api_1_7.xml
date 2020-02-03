@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: javax.resource:javax.resource-api:1.7">
     <CLASSES>
-      <root url="jar://D:/Repository/javax/resource/javax.resource-api/1.7/javax.resource-api-1.7.jar!/" />
+      <root url="jar://E:/Java/Study/repository/javax/resource/javax.resource-api/1.7/javax.resource-api-1.7.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://D:/Repository/javax/resource/javax.resource-api/1.7/javax.resource-api-1.7-javadoc.jar!/" />
+      <root url="jar://E:/Java/Study/repository/javax/resource/javax.resource-api/1.7/javax.resource-api-1.7-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://D:/Repository/javax/resource/javax.resource-api/1.7/javax.resource-api-1.7-sources.jar!/" />
+      <root url="jar://E:/Java/Study/repository/javax/resource/javax.resource-api/1.7/javax.resource-api-1.7-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

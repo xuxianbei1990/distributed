@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.jacorb:jacorb-idl:2.2.3-jonas-patch-20071018">
     <CLASSES>
-      <root url="jar://D:/Repository/org/jacorb/jacorb-idl/2.2.3-jonas-patch-20071018/jacorb-idl-2.2.3-jonas-patch-20071018.jar!/" />
+      <root url="jar://E:/Java/Study/repository/org/jacorb/jacorb-idl/2.2.3-jonas-patch-20071018/jacorb-idl-2.2.3-jonas-patch-20071018.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://D:/Repository/org/jacorb/jacorb-idl/2.2.3-jonas-patch-20071018/jacorb-idl-2.2.3-jonas-patch-20071018-javadoc.jar!/" />
+      <root url="jar://E:/Java/Study/repository/org/jacorb/jacorb-idl/2.2.3-jonas-patch-20071018/jacorb-idl-2.2.3-jonas-patch-20071018-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://D:/Repository/org/jacorb/jacorb-idl/2.2.3-jonas-patch-20071018/jacorb-idl-2.2.3-jonas-patch-20071018-sources.jar!/" />
+      <root url="jar://E:/Java/Study/repository/org/jacorb/jacorb-idl/2.2.3-jonas-patch-20071018/jacorb-idl-2.2.3-jonas-patch-20071018-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
