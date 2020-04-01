@@ -58,9 +58,10 @@ public class RedisJava {
 //        for (int i = 0; i < 10; i++) {
         jedis = new Jedis("192.168.2.2", 6379);
         jedis.auth("123456");
-        testIsRunSuccess();
+//        testIsRunSuccess();
 //        }
         doExpireString();
+
     }
 
 }
