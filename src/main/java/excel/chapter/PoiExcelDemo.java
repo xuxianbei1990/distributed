@@ -1,6 +1,7 @@
 package excel.chapter;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
+
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -68,8 +69,7 @@ public class PoiExcelDemo {
 
 	/**
 	 * 获取 getter 方法
-	 * 
-	 * @param headName
+	 *
 	 *            表头字段ID
 	 * @return
 	 */

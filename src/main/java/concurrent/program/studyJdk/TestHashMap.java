@@ -9,6 +9,6 @@ package concurrent.program.studyJdk;
 public class TestHashMap {
 
     public static void main(String[] args) {
-
-    }
+            System.out.println(0x61c88647);
+}
 }

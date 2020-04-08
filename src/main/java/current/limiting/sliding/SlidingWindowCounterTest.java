@@ -1,7 +1,5 @@
 package current.limiting.sliding;
 
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +24,6 @@ public class SlidingWindowCounterTest {
     private ExecutorService es = Executors.newCachedThreadPool();
     private ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 
-    @Test
     public void testNWindow() throws IOException {
         SlidingWindowCounter swc = new SlidingWindowCounter(3);
         ses.scheduleAtFixedRate(() -> {
@@ -43,7 +40,6 @@ public class SlidingWindowCounterTest {
     }
 
 
-    @Test
     public void test1Window() {
         SlidingWindowCounter swc = new SlidingWindowCounter(1);
         System.out.println(swc);
@@ -57,7 +53,6 @@ public class SlidingWindowCounterTest {
         System.out.println(swc);
     }
 
-    @Test
     public void test3Window() {
         SlidingWindowCounter swc = new SlidingWindowCounter(3);
         System.out.println(swc);
