@@ -1,6 +1,8 @@
 package calculation.chapter.three;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 冒泡排序
@@ -64,10 +66,10 @@ public class BubbleSort {
         int tmp = 0;
         int lastExchangeIndex = 0;
         int sortBorder = array.length - 1;
-        for(int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++) {
             boolean isSorted = true;
             for (int j = 0; j < sortBorder; j++) {
-                if (array[j] > array[j+1]){
+                if (array[j] > array[j + 1]) {
                     tmp = array[j];
                     array[j] = array[j + 1];
                     array[j + 1] = tmp;
@@ -95,5 +97,12 @@ public class BubbleSort {
         bubbleSort.display();
         bubbleSort.sortEx2();
         bubbleSort.display();
+
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(13);
+        list.add(5);
+        list.sort((x, y) -> x > y ? -1 : 1);
+        System.out.println(list);
     }
 }

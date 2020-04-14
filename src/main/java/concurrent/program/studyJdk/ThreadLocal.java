@@ -27,7 +27,7 @@ public class ThreadLocal<T> {
 
     public void set(T value) {
         //每个线程下维护一个ThreadLocalMap
-        Thread t = Thread.currentThread();
+        MyThread t = MyThread.currentThread();
         ThreadLocalMap map = getMap(t);
         if (map != null)
             map.set(this, value);
@@ -35,11 +35,11 @@ public class ThreadLocal<T> {
             createMap(t, value);
     }
 
-    ThreadLocalMap getMap(Thread t) {
+    ThreadLocalMap getMap(MyThread t) {
         return t.threadLocals;
     }
 
-    void createMap(Thread t, T firstValue) {
+    void createMap(MyThread t, T firstValue) {
         t.threadLocals = new ThreadLocalMap(this, firstValue);
     }
 

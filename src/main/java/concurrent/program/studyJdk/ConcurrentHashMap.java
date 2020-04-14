@@ -230,7 +230,7 @@ public class ConcurrentHashMap<K, V> implements Serializable {
     static final class TreeBin<K, V> extends Node<K, V> {
         TreeNode<K, V> root;
         volatile TreeNode<K, V> first;
-        volatile Thread waiter;
+        volatile MyThread waiter;
         volatile int lockState;
         // values for lockState
         static final int WRITER = 1; // set while holding write lock

@@ -6,12 +6,12 @@ package concurrent.program.studyJdk;
  * Time: 20:31
  * Version:V1.0
  */
-public class Thread implements Runnable {
+public class MyThread implements Runnable {
 
     ThreadLocal.ThreadLocalMap threadLocals = null;
 
     //获取当前线程是操作系统
-    public static native Thread currentThread();
+    public static native MyThread currentThread();
 
 
     @Override
