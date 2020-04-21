@@ -6,14 +6,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * ThreadLocal 是支持泛型
- * 其实就是一个key放到thread threadlocalmap
+ * 其实就是一个key放到thread threadlocalmap 而这个map是key是弱应用，value是强应用, entry 是存在的
+ * 场景：GC的条件是，对象不可达。所以只有当threadLocal被频繁创建时候且没有remove才会造成内存泄漏, 如果是成员变量或者静态变量不会被GC
  *
  * @author: xuxianbei
  * Date: 2020/4/7
  * Time: 20:24
  * Version:V1.0
  */
-public class ThreadLocal<T> {
+public class MyThreadLocal<T> {
 
     private final int threadLocalHashCode = nextHashCode();
 
@@ -21,8 +22,38 @@ public class ThreadLocal<T> {
     private static AtomicInteger nextHashCode =
             new AtomicInteger();
 
-    public ThreadLocal() {
+    public MyThreadLocal() {
 
+    }
+
+
+    public T get() {
+        MyThread t = MyThread.currentThread();
+        ThreadLocalMap map = getMap(t);
+        if (map != null) {
+            ThreadLocalMap.Entry e = map.getEntry(this);
+            if (e != null) {
+                @SuppressWarnings("unchecked")
+                T result = (T) e.value;
+                return result;
+            }
+        }
+        return setInitialValue();
+    }
+
+    private T setInitialValue() {
+        T value = initialValue();
+        MyThread t = MyThread.currentThread();
+        ThreadLocalMap map = getMap(t);
+        if (map != null)
+            map.set(this, value);
+        else
+            createMap(t, value);
+        return value;
+    }
+
+    protected T initialValue() {
+        return null;
     }
 
     public void set(T value) {
@@ -50,6 +81,7 @@ public class ThreadLocal<T> {
         return nextHashCode.getAndAdd(HASH_INCREMENT);
     }
 
+
     /**
      * 就是value是强应用：key是弱引用。
      */
@@ -57,19 +89,45 @@ public class ThreadLocal<T> {
 
         private int size = 0;
 
-        static class Entry extends WeakReference<ThreadLocal<?>> {
+        static class Entry extends WeakReference<MyThreadLocal<?>> {
             /**
              * The value associated with this ThreadLocal.
              */
             Object value;
 
-            Entry(ThreadLocal<?> k, Object v) {
+            Entry(MyThreadLocal<?> k, Object v) {
                 super(k);
                 value = v;
             }
         }
 
         private static final int INITIAL_CAPACITY = 16;
+
+        private Entry getEntry(MyThreadLocal<?> key) {
+            int i = key.threadLocalHashCode & (table.length - 1);
+            Entry e = table[i];
+            if (e != null && e.get() == key)
+                return e;
+            else
+                return getEntryAfterMiss(key, i, e);
+        }
+
+        private Entry getEntryAfterMiss(MyThreadLocal<?> key, int i, Entry e) {
+            Entry[] tab = table;
+            int len = tab.length;
+
+            while (e != null) {
+                MyThreadLocal<?> k = e.get();
+                if (k == key)
+                    return e;
+                if (k == null)
+                    expungeStaleEntry(i);
+                else
+                    i = nextIndex(i, len);
+                e = tab[i];
+            }
+            return null;
+        }
 
         /**
          * The table, resized as necessary.
@@ -79,7 +137,7 @@ public class ThreadLocal<T> {
 
         private int threshold;
 
-        ThreadLocalMap(ThreadLocal<?> firstKey, Object firstValue) {
+        ThreadLocalMap(MyThreadLocal<?> firstKey, Object firstValue) {
             table = new Entry[INITIAL_CAPACITY];
             int i = firstKey.threadLocalHashCode & (INITIAL_CAPACITY - 1);
             table[i] = new Entry(firstKey, firstValue);
@@ -87,14 +145,14 @@ public class ThreadLocal<T> {
             setThreshold(INITIAL_CAPACITY);
         }
 
-        private void set(ThreadLocal<?> key, Object value) {
+        private void set(MyThreadLocal<?> key, Object value) {
             Entry[] tab = table;
             int len = tab.length;
             int i = key.threadLocalHashCode & (len - 1);
             for (Entry e = tab[i];
                  e != null;
                  e = tab[i = nextIndex(i, len)]) {
-                ThreadLocal<?> k = e.get();
+                MyThreadLocal<?> k = e.get();
 
                 if (k == key) {
                     e.value = value;
@@ -107,9 +165,11 @@ public class ThreadLocal<T> {
                 }
             }
         }
+
         private static int nextIndex(int i, int len) {
             return ((i + 1 < len) ? i + 1 : 0);
         }
+
         private void setThreshold(int len) {
             threshold = len * 2 / 3;
         }
@@ -118,7 +178,7 @@ public class ThreadLocal<T> {
             return ((i - 1 >= 0) ? i - 1 : len - 1);
         }
 
-        private void replaceStaleEntry(ThreadLocal<?> key, Object value,
+        private void replaceStaleEntry(MyThreadLocal<?> key, Object value,
                                        int staleSlot) {
             Entry[] tab = table;
             int len = tab.length;
@@ -140,7 +200,7 @@ public class ThreadLocal<T> {
             for (int i = nextIndex(staleSlot, len);
                  (e = tab[i]) != null;
                  i = nextIndex(i, len)) {
-                ThreadLocal<?> k = e.get();
+                MyThreadLocal<?> k = e.get();
 
                 // If we find key, then we need to swap it
                 // with the stale entry to maintain hash table order.
@@ -188,7 +248,7 @@ public class ThreadLocal<T> {
                     removed = true;
                     i = expungeStaleEntry(i);
                 }
-            } while ( (n >>>= 1) != 0);
+            } while ((n >>>= 1) != 0);
             return removed;
         }
 
@@ -207,7 +267,7 @@ public class ThreadLocal<T> {
             for (i = nextIndex(staleSlot, len);
                  (e = tab[i]) != null;
                  i = nextIndex(i, len)) {
-                ThreadLocal<?> k = e.get();
+                MyThreadLocal<?> k = e.get();
                 if (k == null) {
                     e.value = null;
                     tab[i] = null;
@@ -227,6 +287,24 @@ public class ThreadLocal<T> {
             }
             return i;
         }
+    }
+
+
+    public static void main(String[] args) {
+        ThreadLocalMap.Entry entry = new ThreadLocalMap.Entry(new MyThreadLocal<>(), "dd");
+        WeakReference weakReference = new WeakReference(new Object());
+        System.gc();
+        System.out.println(entry.toString() + weakReference.get());
+        Object o = new Object();
+        weakReference = new WeakReference(o);
+        System.gc();
+        System.out.println(entry.toString() + weakReference.get());
+
+        ThreadLocal threadLocal = new ThreadLocal();
+        threadLocal.set("tt");
+        System.gc();
+        threadLocal.set("yy");
+        System.out.println(threadLocal);
     }
 }
 
