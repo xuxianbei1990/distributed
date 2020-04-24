@@ -14,7 +14,7 @@ import java.util.Map;
  * Time: 15:30
  * Version:V1.0
  */
-public class ConcurrentHashMap<K, V> implements Serializable {
+public class MyConcurrentHashMap<K, V> implements Serializable {
 
     private static final long serialVersionUID = 4567168400242806161L;
 
@@ -112,7 +112,7 @@ public class ConcurrentHashMap<K, V> implements Serializable {
     static {
         try {
             U = getUnsafe();
-            Class<?> k = ConcurrentHashMap.class;
+            Class<?> k = MyConcurrentHashMap.class;
             SIZECTL = U.objectFieldOffset
                     (k.getDeclaredField("sizeCtl"));
             Class<?> ak = Node[].class;

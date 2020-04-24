@@ -13,7 +13,7 @@ import java.util.Map;
  * Time: 16:12
  * Version:V1.0
  */
-public class HashMap<K, V> {
+public class MyHashMap<K, V> {
 
     transient Node<K, V>[] table;
 
@@ -278,7 +278,7 @@ public class HashMap<K, V> {
 
 
         //放入或者返回节点
-        final TreeNode<K, V> putTreeVal(HashMap<K, V> map, Node<K, V>[] tab,
+        final TreeNode<K, V> putTreeVal(MyHashMap<K, V> map, Node<K, V>[] tab,
                                         int h, K k, V v) {
             Class<?> kc = null;
             boolean searched = false;

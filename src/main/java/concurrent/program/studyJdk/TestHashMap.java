@@ -8,7 +8,10 @@ package concurrent.program.studyJdk;
  */
 public class TestHashMap {
 
+    static Integer COUNT_BITS = 32;
+
     public static void main(String[] args) {
-            System.out.println(0x61c88647);
-}
+        COUNT_BITS = COUNT_BITS << 1;
+
+    }
 }
