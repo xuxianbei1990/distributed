@@ -7,6 +7,8 @@ import sun.misc.Unsafe;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author: xuxianbei
@@ -29,6 +31,16 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
     private transient volatile CounterCell[] counterCells;
 
     private transient volatile long baseCount;
+    private static final int MAXIMUM_CAPACITY = 1 << 30;
+    private transient volatile int cellsBusy;
+    /**
+     * The next table to use; non-null only while resizing.
+     */
+    private transient volatile Node<K, V>[] nextTable;
+    private static int RESIZE_STAMP_BITS = 16;
+    private static final int RESIZE_STAMP_SHIFT = 32 - RESIZE_STAMP_BITS;
+    private static final int MAX_RESIZERS = (1 << (32 - RESIZE_STAMP_BITS)) - 1;
+    private transient volatile int transferIndex;
 
     @Data
     @AllArgsConstructor
@@ -56,6 +68,7 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
 
     /**
      * put 可能会失败
+     *
      * @param key
      * @param value
      * @return
@@ -70,6 +83,7 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
     // 11101000101100010 ^ 1 & 111111111111111 1111111111111111
     // 11101000101100011
     static final int spread(int h) {
+        //右移16位 或 低位 和 得到一个正数。
         return (h ^ (h >>> 16)) & HASH_BITS;
     }
 
@@ -80,6 +94,8 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
     private static final int DEFAULT_CAPACITY = 16;
 
     static final int TREEIFY_THRESHOLD = 8;
+
+    static final int NCPU = Runtime.getRuntime().availableProcessors();
 
     /**
      * 不安全方法，因为java 不允许访问Unsafe实例。
@@ -94,6 +110,8 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
     private static final int ASHIFT;
     private static final long ABASE;
     private static final long BASECOUNT;
+    private static long CELLVALUE;
+    private static long CELLSBUSY;
 
 
     @Deprecated
@@ -119,6 +137,8 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
             ABASE = U.arrayBaseOffset(ak);
             BASECOUNT = U.objectFieldOffset
                     (k.getDeclaredField("baseCount"));
+//            CELLVALUE = U.objectFieldOffset
+//                    (k.getDeclaredField("value"));
             int scale = U.arrayIndexScale(ak);
             ASHIFT = 31 - Integer.numberOfLeadingZeros(scale);
         } catch (Exception e) {
@@ -136,7 +156,7 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
             if (tab == null || (n = tab.length) == 0) {
                 tab = initTable();
                 //并发线程下取出Node<K, V>
-            } else if ((f = tabAt(tab, i = (n = 1) & hash)) == null) {
+            } else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
                 //通过cas放入
                 if (casTabAt(tab, i, null, new Node<K, V>(hash, key, value, null)))
                     break;
@@ -146,7 +166,7 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
             else {
                 V oldVal = null;
                 synchronized (f) {
-                    //多线程下双重判定  主要原因还是工作内存和主内存相互切换导致的
+                    //多线程下双重判定
                     if (tabAt(tab, i) == f) {
                         if (fh >= 0) {
                             binCount = 1;
@@ -189,28 +209,167 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
         addCount(1L, binCount);
         return null;
     }
+
     private final void addCount(long x, int check) {
-        CounterCell[] as; long b, s;
+        CounterCell[] as;
+        long b, s = 0;
         //第一次进来这里肯定是null
+        //本对象  待更新属性  预期值 0  更新值 1
         if ((as = counterCells) != null || !U.compareAndSwapLong(this, BASECOUNT, b = baseCount, s = b + x)) {
-            CounterCell a; long v; int m;
+            CounterCell a;
+            long v;
+            int m;
             boolean uncontended = true;
-//            if (as == null || (m = as.length - 1) < 0 || ())
+            if (as == null || (m = as.length - 1) < 0 ||
+
+                    (a = as[MyThreadLocalRandom.getProbe() & m]) == null ||
+                    !(uncontended =
+                            U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))) {
+                fullAddCount(x, uncontended);
+                return;
+            }
+            if (check <= 1)
+                return;
+            s = sumCount();
         }
         if (check >= 0) {
-            Node<K,V>[] tab, nt; int n, sc;
+            Node<K, V>[] tab, nt;
+            int n, sc;
+            while (s >= (long) (sc = sizeCtl) && (tab = table) != null &&
+                    (n = tab.length) < MAXIMUM_CAPACITY) {
+                int rs = resizeStamp(n);
+                if (sc < 0) {
+                    if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 ||
+                            sc == rs + MAX_RESIZERS || (nt = nextTable) == null ||
+                            transferIndex <= 0)
+                        break;
+                    if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))
+                        transfer(tab, nt);
+                } else if (U.compareAndSwapInt(this, SIZECTL, sc,
+                        (rs << RESIZE_STAMP_SHIFT) + 2))
+                    transfer(tab, null);
+                s = sumCount();
+            }
 
+        }
 
+    }
+
+    private final void fullAddCount(long x, boolean wasUncontended) {
+        int h;
+        if ((h = MyThreadLocalRandom.getProbe()) == 0) {
+            MyThreadLocalRandom.localInit();      // force initialization
+            h = MyThreadLocalRandom.getProbe();
+            wasUncontended = true;
+        }
+        boolean collide = false;                // True if last slot nonempty
+        for (; ; ) {
+            CounterCell[] as;
+            CounterCell a;
+            int n;
+            long v;
+            if ((as = counterCells) != null && (n = as.length) > 0) {
+                if ((a = as[(n - 1) & h]) == null) {
+                    if (cellsBusy == 0) {            // Try to attach new Cell
+                        CounterCell r = new CounterCell(x); // Optimistic create
+                        if (cellsBusy == 0 &&
+                                U.compareAndSwapInt(this, CELLSBUSY, 0, 1)) {
+                            boolean created = false;
+                            try {               // Recheck under lock
+                                CounterCell[] rs;
+                                int m, j;
+                                if ((rs = counterCells) != null &&
+                                        (m = rs.length) > 0 &&
+                                        rs[j = (m - 1) & h] == null) {
+                                    rs[j] = r;
+                                    created = true;
+                                }
+                            } finally {
+                                cellsBusy = 0;
+                            }
+                            if (created)
+                                break;
+                            continue;           // Slot is now non-empty
+                        }
+                    }
+                    collide = false;
+                } else if (!wasUncontended)       // CAS already known to fail
+                    wasUncontended = true;      // Continue after rehash
+                else if (U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))
+                    break;
+                else if (counterCells != as || n >= NCPU)
+                    collide = false;            // At max size or stale
+                else if (!collide)
+                    collide = true;
+                else if (cellsBusy == 0 &&
+                        U.compareAndSwapInt(this, CELLSBUSY, 0, 1)) {
+                    try {
+                        if (counterCells == as) {// Expand table unless stale
+                            CounterCell[] rs = new CounterCell[n << 1];
+                            for (int i = 0; i < n; ++i)
+                                rs[i] = as[i];
+                            counterCells = rs;
+                        }
+                    } finally {
+                        cellsBusy = 0;
+                    }
+                    collide = false;
+                    continue;                   // Retry with expanded table
+                }
+                h = MyThreadLocalRandom.advanceProbe(h);
+            } else if (cellsBusy == 0 && counterCells == as &&
+                    U.compareAndSwapInt(this, CELLSBUSY, 0, 1)) {
+                boolean init = false;
+                try {                           // Initialize table
+                    if (counterCells == as) {
+                        CounterCell[] rs = new CounterCell[2];
+                        rs[h & 1] = new CounterCell(x);
+                        counterCells = rs;
+                        init = true;
+                    }
+                } finally {
+                    cellsBusy = 0;
+                }
+                if (init)
+                    break;
+            } else if (U.compareAndSwapLong(this, BASECOUNT, v = baseCount, v + x))
+                break;                          // Fall back on using base
         }
     }
 
-    @sun.misc.Contended static final class CounterCell {
-        volatile long value;
-        CounterCell(long x) { value = x; }
+    final long sumCount() {
+        CounterCell[] as = counterCells;
+        CounterCell a;
+        long sum = baseCount;
+        if (as != null) {
+            for (int i = 0; i < as.length; ++i) {
+                if ((a = as[i]) != null)
+                    sum += a.value;
+            }
+        }
+        return sum;
+    }
+
+    private final void transfer(Node<K, V>[] tab, Node<K, V>[] nextTab) {
+
+    }
+
+    static final int resizeStamp(int n) {
+        return Integer.numberOfLeadingZeros(n) | (1 << (RESIZE_STAMP_BITS - 1));
     }
 
 
-    private final void treeifyBin(Node<K,V>[] tab, int index) {
+    @sun.misc.Contended
+    static final class CounterCell {
+        volatile long value;
+
+        CounterCell(long x) {
+            value = x;
+        }
+    }
+
+
+    private final void treeifyBin(Node<K, V>[] tab, int index) {
 
     }
 
@@ -287,6 +446,12 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
     public static void main(String[] args) {
         //1 1101000101100010
 //        1101000101100010
+        int n, sc;
+        long s = 0;
+//        System.out.println(s >= (long) (sc = 12) && (new Object()) != null &&
+//                (n = 16) < MAXIMUM_CAPACITY);
+        ConcurrentMap concurrentMap = new ConcurrentHashMap();
+        concurrentMap.putIfAbsent("dd", "dd");
         System.out.println(spread("the".hashCode()));
 
         System.out.println(DEFAULT_CAPACITY - (DEFAULT_CAPACITY >>> 2));
