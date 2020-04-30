@@ -51,7 +51,7 @@ public class MyHashMap<K, V> {
             n = (tab = resize()).length;
         //取hash值与table长度的hash值进行与操作。
         if ((p = tab[i = (n - 1) & hash]) == null) {
-            //第一步到这里结束
+            //第一步到这里结束  如果两个线程同时走到这里会如何？会丢失
             tab[i] = newNode(hash, key, value, null);
         } else {
             Node<K, V> e = null;
@@ -249,7 +249,7 @@ public class MyHashMap<K, V> {
         }
     }
 
-    @Data
+
     static final class TreeNode<K, V> extends Entry<K, V> {
         TreeNode<K, V> parent;  // red-black tree links
         TreeNode<K, V> left;

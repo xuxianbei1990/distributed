@@ -1,6 +1,10 @@
 package concurrent.program.studyJdk;
 
 import java.lang.reflect.Constructor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -9,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Time: 11:34
  * Version:V1.0
  */
-public class MyReentrantLock {
+public class MyReentrantLock extends AbstractQueuedSynchronizer implements Lock {
     private String value;
 
     public MyReentrantLock(String value) {
@@ -28,5 +32,39 @@ public class MyReentrantLock {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void lock() {
+        if (compareAndSetState(0, 1)) {
+           setExclusiveOwnerThread(Thread.currentThread());
+        } else{
+            acquire(1);
+        }
+    }
+
+    @Override
+    public void lockInterruptibly() throws InterruptedException {
+
+    }
+
+    @Override
+    public boolean tryLock() {
+        return false;
+    }
+
+    @Override
+    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+        return false;
+    }
+
+    @Override
+    public void unlock() {
+
+    }
+
+    @Override
+    public Condition newCondition() {
+        return null;
     }
 }
