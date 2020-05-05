@@ -2,6 +2,9 @@ package concurrent.program.studyJdk;
 
 import sun.misc.Unsafe;
 
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+import java.util.concurrent.locks.LockSupport;
+
 /**
  * @author: xuxianbei
  * Date: 2020/4/30
@@ -26,8 +29,12 @@ public abstract class MyAbstractQueuedSynchronizer {
      */
     public final void acquire(int arg) {
         if (!tryAcquire(arg) && acquireQueued(addWaiter(Node.EXCLUSIVE), arg)) {
-
+            selfInterrupt();
         }
+    }
+
+    private void selfInterrupt() {
+        Thread.currentThread().interrupt();
     }
 
     final boolean acquireQueued(final Node node, int arg) {
@@ -35,19 +42,74 @@ public abstract class MyAbstractQueuedSynchronizer {
         try {
             boolean interrupted = false;
             for (; ; ) {
-                final Node p = node
+                final Node p = node.predecessor();
+                if (p == head && tryAcquire(arg)) {
+                    setHead(node);
+                    p.next = null;
+                    failed = false;
+                    return interrupted;
+                }
+                if (shouldParkAfterFailedAcquire(p, node) &&
+                        parkAndCheckInterrupt())
+                    interrupted = true;
             }
+        } finally {
+            if (failed)
+                cancelAcquire(node);
         }
+    }
+
+    private void cancelAcquire(Node node) {
+
+    }
+
+    private boolean parkAndCheckInterrupt() {
+        LockSupport.park(this);
+        return Thread.interrupted();
+    }
+
+    private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
+        int ws = pred.waitStatus;
+        if (ws == Node.SIGNAL)
+            return true;
+        if (ws > 0) {
+            do {
+                node.prev = pred = pred.prev;
+            } while (pred.waitStatus > 0);
+            pred.next = node;
+        } else {
+            compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
+        }
+        return false;
+    }
+
+    private static void compareAndSetWaitStatus(Node pred, int ws, int signal) {
+
+    }
+
+
+    private void setHead(Node node) {
+        head = node;
+        node.thread = null;
+        node.prev = null;
     }
 
     private Node addWaiter(Node mode) {
         Node node = new Node(Thread.currentThread(), mode);
         Node pred = tail;
         if (pred != null) {
-
+            node.prev = pred;
+            if (compareAndSetTail(pred, node)) {
+                pred.next = node;
+                return node;
+            }
         }
         enq(node);
         return node;
+    }
+
+    private boolean compareAndSetTail(Node pred, Node node) {
+        return false;
     }
 
     private Node enq(Node node) {
@@ -73,7 +135,9 @@ public abstract class MyAbstractQueuedSynchronizer {
         static final int SIGNAL = -1;
         static final int CONDIDION = -2;
         volatile Node prev;
+        volatile Node next;
         Node nextWaiter;
+        volatile int waitStatus;
         volatile Thread thread;
 
         Node() {    // Used to establish initial head or SHARED marker

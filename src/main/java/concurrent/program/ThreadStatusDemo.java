@@ -35,31 +35,31 @@ public class ThreadStatusDemo {
 
     public static void main(String[] args) {
         test();
-        new Thread(() -> {
-            while (true) {
-                try {
-                    TimeUnit.SECONDS.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-                , "timewaiting").start();
-
-        new Thread(() -> {
-            while (true) {
-                synchronized (ThreadStatusDemo.class) {
-                    try {
-                        ThreadStatusDemo.class.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }, "waiting").start();
-
-        new Thread(new BlockDemo(), "BlockDemo1").start();
-        new Thread(new BlockDemo(), "BlockDemo2").start();
+//        new Thread(() -> {
+//            while (true) {
+//                try {
+//                    TimeUnit.SECONDS.sleep(100);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//                , "timewaiting").start();
+//
+//        new Thread(() -> {
+//            while (true) {
+//                synchronized (ThreadStatusDemo.class) {
+//                    try {
+//                        ThreadStatusDemo.class.wait();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }, "waiting").start();
+//
+//        new Thread(new BlockDemo(), "BlockDemo1").start();
+//        new Thread(new BlockDemo(), "BlockDemo2").start();
 
 
     }
