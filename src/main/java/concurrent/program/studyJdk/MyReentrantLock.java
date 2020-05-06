@@ -1,7 +1,6 @@
 package concurrent.program.studyJdk;
 
 import java.lang.reflect.Constructor;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.concurrent.locks.Condition;
@@ -45,8 +44,7 @@ public class MyReentrantLock extends AbstractQueuedSynchronizer implements Lock 
                 setExclusiveOwnerThread(current);
                 return true;
             }
-        }
-        else if (current == getExclusiveOwnerThread()) {
+        } else if (current == getExclusiveOwnerThread()) {
             int nextc = c + acquires;
             if (nextc < 0) // overflow
                 throw new Error("Maximum lock count exceeded");
@@ -86,12 +84,12 @@ public class MyReentrantLock extends AbstractQueuedSynchronizer implements Lock 
 
     @Override
     public boolean tryLock() {
-        return tryRelease(1);
+        return tryAcquire(1);
     }
 
     @Override
     public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
-        return tryAcquireNanos(1,unit.toNanos(time));
+        return tryAcquireNanos(1, unit.toNanos(time));
     }
 
     @Override

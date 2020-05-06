@@ -72,9 +72,10 @@ class Business {
 		lock.lock();
 		try {
 			while (bool) {
+				//这个线程是放到等待队列中的
 				condition.await();// this.wait();
 			}
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < 1; i++) {
 				System.out.println("main thread seq of " + i + ", loop of " + loop);
 			}
 			bool = true;
@@ -90,11 +91,13 @@ class Business {
 			while (!bool) {
 				condition.await();// this.wait();
 			}
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 1; i++) {
 				System.out.println("sub thread seq of " + i + ", loop of " + loop);
 			}
 			bool = false;
 			condition.signal();// this.notify();
+			Thread.sleep(100);
+			System.out.println("证明了signal没有唤醒线程，只是把等待队列数据放到同步队列中了");
 		} finally {
 			lock.unlock();
 		}
@@ -109,16 +112,25 @@ public class ConditionDemo {
 			public void run() {
 				threadExecute(business, "sub");
 			}
-		}).start();
-		threadExecute(business, "main");
+		}, "sub").start();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				threadExecute(business, "main");
+			}
+		}, "main").start();
+
+
 	}
 
 	public static void threadExecute(Business business, String threadType) {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1; i++) {
 			try {
 				if ("main".equals(threadType)) {
 					business.main(i);
 				} else {
+					Thread.sleep(100);
 					business.sub(i);
 				}
 			} catch (InterruptedException e) {
