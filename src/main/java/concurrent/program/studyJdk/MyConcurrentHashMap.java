@@ -7,8 +7,6 @@ import sun.misc.Unsafe;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author: xuxianbei
@@ -38,6 +36,9 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
      */
     private transient volatile Node<K, V>[] nextTable;
     private static int RESIZE_STAMP_BITS = 16;
+
+    static final int UNTREEIFY_THRESHOLD = 6;
+    private static final int MIN_TRANSFER_STRIDE = 16;
     private static final int RESIZE_STAMP_SHIFT = 32 - RESIZE_STAMP_BITS;
     private static final int MAX_RESIZERS = (1 << (32 - RESIZE_STAMP_BITS)) - 1;
     private transient volatile int transferIndex;
@@ -156,6 +157,10 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
             if (tab == null || (n = tab.length) == 0) {
                 tab = initTable();
                 //并发线程下取出Node<K, V>
+                /**
+                 * i = (n - 1) & hash
+                 * 取模运算 1 % 3 = 1; 4 % 3 = 1；4 % 6 = 4
+                 */
             } else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
                 //通过cas放入
                 if (casTabAt(tab, i, null, new Node<K, V>(hash, key, value, null)))
@@ -235,16 +240,19 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
         if (check >= 0) {
             Node<K, V>[] tab, nt;
             int n, sc;
+            //当数量到达临界值时候，进行扩容
             while (s >= (long) (sc = sizeCtl) && (tab = table) != null &&
                     (n = tab.length) < MAXIMUM_CAPACITY) {
                 int rs = resizeStamp(n);
                 if (sc < 0) {
+                    //表示存在一个线程在扩容
                     if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 ||
                             sc == rs + MAX_RESIZERS || (nt = nextTable) == null ||
                             transferIndex <= 0)
                         break;
                     if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))
                         transfer(tab, nt);
+                    //1000 0000 0001 1100 0000 0000 0000 0010
                 } else if (U.compareAndSwapInt(this, SIZECTL, sc,
                         (rs << RESIZE_STAMP_SHIFT) + 2))
                     transfer(tab, null);
@@ -350,14 +358,188 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
         return sum;
     }
 
-    private final void transfer(Node<K, V>[] tab, Node<K, V>[] nextTab) {
+    private static long TRANSFERINDEX;
 
+    private final void transfer(Node<K, V>[] tab, Node<K, V>[] nextTab) {
+        int n = tab.length, stride;
+        //计算每条线程处理的桶个数，每条线程处理的桶数量一样，如果CPU为单核，则使用一条线程处理所有桶
+        //每条线程至少处理16个桶，如果计算出来的结果少于16，则一条线程处理16个桶
+        if ((stride = (NCPU > 1) ? (n >>> 3) / NCPU : n) < MIN_TRANSFER_STRIDE)
+            stride = MIN_TRANSFER_STRIDE; // subdivide range
+        if (nextTab == null) {            // 初始化新数组(原数组长度的2倍)
+            try {
+                @SuppressWarnings("unchecked")
+                Node<K, V>[] nt = (Node<K, V>[]) new Node<?, ?>[n << 1];
+                nextTab = nt;
+            } catch (Throwable ex) {      // try to cope with OOME
+                sizeCtl = Integer.MAX_VALUE;
+                return;
+            }
+            nextTable = nextTab;
+            //将 transferIndex 指向最右边的桶，也就是数组索引下标最大的位置
+            transferIndex = n;
+        }
+        int nextn = nextTab.length;
+        ForwardingNode<K, V> fwd = new ForwardingNode<K, V>(nextTab);
+        boolean advance = true;
+        boolean finishing = false; // to ensure sweep before committing nextTab
+        for (int i = 0, bound = 0; ; ) {
+            Node<K, V> f;
+            int fh;
+            while (advance) {
+                int nextIndex, nextBound;
+                if (--i >= bound || finishing)
+                    advance = false;
+                else if ((nextIndex = transferIndex) <= 0) {
+                    i = -1;
+                    advance = false;
+                } else if (U.compareAndSwapInt
+                        (this, TRANSFERINDEX, nextIndex,
+                                nextBound = (nextIndex > stride ?
+                                        nextIndex - stride : 0))) {
+                    bound = nextBound;
+                    i = nextIndex - 1;
+                    advance = false;
+                }
+            }
+            if (i < 0 || i >= n || i + n >= nextn) {
+                int sc;
+                //如果所有的节点都已经完成复制工作  就把nextTable赋值给table 清空临时对象nextTable
+                if (finishing) {
+                    nextTable = null;
+                    table = nextTab;
+                    //重新设置下次扩展阈值
+                    sizeCtl = (n << 1) - (n >>> 1);
+                    return;
+                }
+                if (U.compareAndSwapInt(this, SIZECTL, sc = sizeCtl, sc - 1)) {
+                    if ((sc - 2) != resizeStamp(n) << RESIZE_STAMP_SHIFT)
+                        return;
+                    finishing = advance = true;
+                    i = n; // recheck before commit
+                }
+            } else if ((f = tabAt(tab, i)) == null)
+            /**
+             * ForwardingNode是一种临时节点，在扩容进行中才会出现，hash值固定为-1，
+             * 并且它不存储实际的数据数据。如果旧数组的一个hash桶中全部的节点都迁移到新数组中，
+             * 旧数组就在这个hash桶中放置一个ForwardingNode。读操作或者迭代读时碰到ForwardingNode时，
+             * 将操作转发到扩容后的新的table数组上去执行，写操作碰见它时，则尝试帮助扩容。
+             */
+                advance = casTabAt(tab, i, null, fwd);
+            else if ((fh = f.hash) == MOVED)
+                advance = true; // already processed
+            else {
+                synchronized (f) {
+                    if (tabAt(tab, i) == f) {
+                        Node<K, V> ln, hn;
+                        if (fh >= 0) {
+                            // resize后的元素要么在原地，要么移动n位（n为原capacity）
+                            int runBit = fh & n;
+                            Node<K, V> lastRun = f;
+                            /**
+                             * 下面的逻辑大概是进行高低位分组，进行重新放置
+                             * 低位直接放入，高位移动原链表长度放入
+                             */
+                            for (Node<K, V> p = f.next; p != null; p = p.next) {
+                                int b = p.hash & n;
+                                if (b != runBit) {
+                                    runBit = b;
+                                    lastRun = p;
+                                }
+                            }
+                            if (runBit == 0) {
+                                ln = lastRun;
+                                hn = null;
+                            } else {
+                                hn = lastRun;
+                                ln = null;
+                            }
+                            for (Node<K, V> p = f; p != lastRun; p = p.next) {
+                                int ph = p.hash;
+                                K pk = p.key;
+                                V pv = p.val;
+                                if ((ph & n) == 0)
+                                    ln = new Node<K, V>(ph, pk, pv, ln);
+                                else
+                                    hn = new Node<K, V>(ph, pk, pv, hn);
+                            }
+                            setTabAt(nextTab, i, ln);
+                            setTabAt(nextTab, i + n, hn);
+                            setTabAt(tab, i, fwd);
+                            advance = true;
+                        } else if (f instanceof TreeBin) {
+                            TreeBin<K, V> t = (TreeBin<K, V>) f;
+                            TreeNode<K, V> lo = null, loTail = null;
+                            TreeNode<K, V> hi = null, hiTail = null;
+                            int lc = 0, hc = 0;
+                            for (Node<K, V> e = t.first; e != null; e = e.next) {
+                                int h = e.hash;
+                                TreeNode<K, V> p = new TreeNode<K, V>
+                                        (h, e.key, e.val, null, null);
+                                if ((h & n) == 0) {
+                                    if ((p.prev = loTail) == null)
+                                        lo = p;
+                                    else
+                                        loTail.next = p;
+                                    loTail = p;
+                                    ++lc;
+                                } else {
+                                    if ((p.prev = hiTail) == null)
+                                        hi = p;
+                                    else
+                                        hiTail.next = p;
+                                    hiTail = p;
+                                    ++hc;
+                                }
+                            }
+                            ln = (lc <= UNTREEIFY_THRESHOLD) ? untreeify(lo) :
+                                    (hc != 0) ? new TreeBin<K, V>(lo) : t;
+                            hn = (hc <= UNTREEIFY_THRESHOLD) ? untreeify(hi) :
+                                    (lc != 0) ? new TreeBin<K, V>(hi) : t;
+                            setTabAt(nextTab, i, ln);
+                            setTabAt(nextTab, i + n, hn);
+                            setTabAt(tab, i, fwd);
+                            advance = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    static final <K, V> void setTabAt(Node<K, V>[] tab, int i, Node<K, V> v) {
+
+    }
+
+    static <K, V> Node<K, V> untreeify(Node<K, V> b) {
+        return null;
     }
 
     static final int resizeStamp(int n) {
+        /**
+         * numberOfLeadingZeros:该方法的作用是返回无符号整型i的最高非零位前面的0的个数，包括符号位在内；
+         * 比如说，12的二进制表示为 0000 0000 0000 0000 0000 0000 0000 1100
+         * java的整型长度为32位。那么这个方法返回的就是28
+         *
+         * (1 << (RESIZE_STAMP_BITS - 1)): 1000 0000 0000 0000
+         * |
+         * 1000 0000 0000 0000 或
+         * 0000 0000 0001 1100
+         * 1000 0000 0001 1100
+         */
         return Integer.numberOfLeadingZeros(n) | (1 << (RESIZE_STAMP_BITS - 1));
     }
 
+    static final class ForwardingNode<K, V> extends Node<K, V> {
+        ForwardingNode(Node<K, V>[] tab) {
+            super(MOVED, null, null, null);
+
+        }
+
+        public ForwardingNode(int hash, K key, V val, Node<K, V> next) {
+            super(hash, key, val, next);
+        }
+    }
 
     @sun.misc.Contended
     static final class CounterCell {
@@ -383,6 +565,12 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
         public TreeNode(int hash, K key, V val, Node<K, V> next) {
             super(hash, key, val, next);
         }
+
+        TreeNode(int hash, K key, V val, Node<K, V> next,
+                 TreeNode<K, V> parent) {
+            super(hash, key, val, next);
+            this.parent = parent;
+        }
     }
 
 
@@ -398,6 +586,10 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
 
         public TreeBin(int hash, K key, V val, Node<K, V> next) {
             super(hash, key, val, next);
+        }
+
+        public TreeBin(TreeNode<K, V> lo) {
+            super(-2, null, null, null);
         }
     }
 
@@ -450,10 +642,12 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
         long s = 0;
 //        System.out.println(s >= (long) (sc = 12) && (new Object()) != null &&
 //                (n = 16) < MAXIMUM_CAPACITY);
-        ConcurrentMap concurrentMap = new ConcurrentHashMap();
-        concurrentMap.putIfAbsent("dd", "dd");
-        System.out.println(spread("the".hashCode()));
+//        ConcurrentMap concurrentMap = new ConcurrentHashMap();
+//        for (int i = 0; i < 14; i++) {
+//            concurrentMap.putIfAbsent("dd" + i, "dd");
+//        }
+//        System.out.println(spread("the".hashCode()));
 
-        System.out.println(DEFAULT_CAPACITY - (DEFAULT_CAPACITY >>> 2));
+        System.out.println(Integer.numberOfLeadingZeros(12));
     }
 }
