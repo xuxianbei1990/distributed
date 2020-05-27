@@ -51,6 +51,9 @@ public class ClientDemo {
 		// 异常为止，如果希望在超过一段时间后就不阻塞了，那么要在创建socket对象
 		// 后调用socket.setSoTimeout()
 		InputStream input = socket.getInputStream();
+//		byte[] bytes = new byte[1024];
+//		//这一步阻塞
+//		input.read(bytes);
 		BufferedReader in = new BufferedReader(new InputStreamReader(input));
 		System.out.println(in.readLine());
 		socket.close();
@@ -68,6 +71,6 @@ public class ClientDemo {
 	
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		ClientDemo cd = new ClientDemo();
-		cd.muliSocketWrite();
+		cd.simpleSocketRead();
 	}
 }

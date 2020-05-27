@@ -20,10 +20,11 @@ public class ServerDemo {
 		// setSoTimeout(毫秒)
 		while (true) {
 			try {
-				//如果有客户端连接过来会触发
+				//如果有客户端连接过来会触发  这一步是阻塞的
 				Socket socket = ss.accept();
 				if (socket.isConnected()) {
 					InputStream in = socket.getInputStream();
+					//这一步也是阻塞的
 					System.out.println(IOUtils.toString(in));
 					socket.close();
 				}
