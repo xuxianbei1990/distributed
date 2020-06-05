@@ -179,7 +179,7 @@ public class MyHashMap<K, V> {
                         Node<K, V> loHead = null, loTail = null,
                                 hiHead = null, hiTail = null,
                                 next;
-                        //j.8修复了多线程扩容死锁问题。
+                        //1.8修复了多线程扩容死锁问题。
                         do {
                             next = e.next;
                             /**
