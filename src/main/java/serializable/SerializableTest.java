@@ -27,7 +27,7 @@ public class SerializableTest {
 
 //        deepCloneTest();
         int testCount = 100;
-        // 数量小时候 性能高于fastjson
+        // 数量小时候 性能高于fastjson 安全性高于Fastjson
         executejkson(testCount);
         // 数量大的时候性能高效
         executeFastjson(testCount);
@@ -71,9 +71,11 @@ public class SerializableTest {
         for (int i = 0; i < testCount; i++) {
             writeBytes = objectMapper.writeValueAsBytes(student);
         }
+
         System.out.println("jkson 序列化:" + (System.currentTimeMillis() - start) + "ms; 总大小："
                 + writeBytes.length);
 
+        System.out.println(objectMapper.writeValueAsString(student));
         Student student1 = objectMapper.readValue(writeBytes, Student.class);
         System.out.println(student1);
     }
