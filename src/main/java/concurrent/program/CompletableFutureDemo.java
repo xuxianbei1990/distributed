@@ -41,10 +41,10 @@ public class CompletableFutureDemo {
         student.setTeacher(new Teacher());
         student.getTeacher().setName("lukaker");
         System.out.println("1");
-        if (student.getAge() == 1) {
-            //查下堆栈信息是否会产生死锁 不会
-            throw new RuntimeException("sdf");
-        }
+//        if (student.getAge() == 1) {
+//            //查下堆栈信息是否会产生死锁 不会
+//            throw new RuntimeException("sdf");
+//        }
         return student;
     }
 
@@ -56,6 +56,7 @@ public class CompletableFutureDemo {
                             throw new RuntimeException("future", throwable);
                         }
                         System.out.println(student);
+                        student = null;
                         return student;
                     }, EXECUTOR).get(1000, TimeUnit.MICROSECONDS);
             EXECUTOR.shutdown();
@@ -131,7 +132,7 @@ public class CompletableFutureDemo {
 
     public static void main(String[] args) {
         CompletableFutureDemo demo = new CompletableFutureDemo();
-        demo.testFutureException();
+        demo.test();
     }
 
     public static String getStackTrace(Throwable throwable) {
