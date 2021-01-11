@@ -25,7 +25,7 @@ public class TransmittableThreadLocalDemo {
 //    static ExecutorService pool2 = Executors.newFixedThreadPool(5);
 
     public static void main(String[] args) {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1; i++) {
             int index = i;
             pool.execute(new Thread(() -> {
                 //传递值
