@@ -12,6 +12,7 @@ import java.util.BitSet;
  */
 public class BloomFilterSimple {
     private static final int DEFAULT_SIZE = 2 << 24;
+    //通过不同的hash种子降低hash碰撞概率
     private static final int[] seeds = new int[]{3, 7, 11, 13, 17, 31, 37, 61};
     private BitSet bits = new BitSet();
     private SimpleHash[] func = new SimpleHash[seeds.length];
