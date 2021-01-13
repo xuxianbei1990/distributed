@@ -83,6 +83,13 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
     //  the 1 1100000001110000
     // 11101000101100010 ^ 1 & 111111111111111 1111111111111111
     // 11101000101100011
+
+    /**
+     *  与hashmap计算hash基本一样，但多了一步& HASH_BITS，HASH_BITS是0x7fffffff，该步是为了消除最高位上的负符号
+     *  hash的负在ConcurrentHashMap中有特殊意义表示在扩容或者是树节点
+     * @param h
+     * @return
+     */
     static final int spread(int h) {
         //右移16位 或 低位 和 得到一个正数。
         return (h ^ (h >>> 16)) & HASH_BITS;
