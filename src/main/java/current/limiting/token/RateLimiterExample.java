@@ -20,19 +20,8 @@ public class RateLimiterExample {
      */
     private static final RateLimiter RATE_LIMITER = RateLimiter.create(5);
 
-    public static String testStr() {
-        String str = "hello";
-        try {
-            return str;
-        } finally {
-            str = "222";
-        }
-    }
-
     public static void main(String[] args) {
-        System.out.print(testStr());
-
-//        testLimiter();
+        testLimiter();
     }
 
     private static void testLimiter() {
