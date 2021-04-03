@@ -235,7 +235,7 @@ public class ThreadPoolDemo {
 //		 tpd.testThreadPool(Executors.newSingleThreadExecutor());
 		// 创建一个可安排在给定延迟后运行命令或者定期地执行的线程池。
 		// 效果类似于Timer定时器
-//		 tpd.testSchedulePool(Executors.newScheduledThreadPool(3));
+		 tpd.testSchedulePool(Executors.newScheduledThreadPool(3));
 
 //		ThreadInfo threadInfo = new ThreadInfo();
 //		ThreadInfo.beginTime = System.currentTimeMillis();

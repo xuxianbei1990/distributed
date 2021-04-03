@@ -1,12 +1,12 @@
 package jms.kafka;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.common.Cluster;
 import org.apache.kafka.common.PartitionInfo;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 //自定义分区
 public class MyPartitioner implements Partitioner {
@@ -21,6 +21,7 @@ public class MyPartitioner implements Partitioner {
 
 	@Override
 	public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
+		//分区列表
 		List<PartitionInfo> list = cluster.partitionsForTopic(topic);
 		int partitionNum = 0;
 		if (key == null) {

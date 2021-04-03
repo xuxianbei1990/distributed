@@ -43,7 +43,9 @@ public class ConsistentHash<T> {
         long hash = hashFunction.hash((String) key);
         //数据映射在两台虚拟机器所在环之间,就需要按顺时针方向寻找机器
         if (!circle.containsKey(hash)) {
+            // 返回大于等于该hash的maps
             SortedMap<Long, T> tailMap = circle.tailMap(hash);
+            //找出最小的
             hash = tailMap.isEmpty() ? circle.firstKey() : tailMap.firstKey();
         }
         return circle.get(hash);
@@ -94,6 +96,7 @@ public class ConsistentHash<T> {
     }
 
     public static void main(String[] args) {
+        //假设ABC就是服务器
         Set<String> nodes = new HashSet<>();
         nodes.add("A");
         nodes.add("B");
@@ -107,7 +110,7 @@ public class ConsistentHash<T> {
 //        consistentHash.testBalance();
 
         for (int i = 0; i < 100; i++) {
-            System.out.println(consistentHash.get(getRandomString(3)));
+            System.out.println(consistentHash.get(/*这里模拟缓存key*/getRandomString(3)));
         }
     }
 }

@@ -1,13 +1,9 @@
 package jms.kafka;
 
+import org.apache.kafka.clients.producer.*;
+
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 
 public class KafkaProducerDemo extends Thread {
 
@@ -18,14 +14,16 @@ public class KafkaProducerDemo extends Thread {
 
 	public KafkaProducerDemo(String topic, boolean isAysnc) {
 		Properties properties = new Properties();
-		properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.2.3:9092,192.168.2.4:9092,192.168.2.5:9092");
+		properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.2.2:9092"); //,192.168.2.4:9092,192.168.2.5:9092
 		properties.put(ProducerConfig.CLIENT_ID_CONFIG, "KafkaProducerDemo");
+		//0 不需要确认（性能高，数据丢失）1：只需要leader确认，-1：需要全部确认（最安全，性能最低）
 		properties.put(ProducerConfig.ACKS_CONFIG, "-1");
 		properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
 				"org.apache.kafka.common.serialization.IntegerSerializer");
 		properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
 				"org.apache.kafka.common.serialization.StringSerializer");
 		properties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, "jms.kafka.MyPartitioner");
+//	  优化项：	batch.size  大小超过就发送。  linger.ms 发送间隔  max.request.size（1M） 当前请求最大字节数
 		kafkaProducer = new KafkaProducer<Integer, String>(properties);
 		this.topic = topic;
 		this.isAysnc = isAysnc;
@@ -71,7 +69,7 @@ public class KafkaProducerDemo extends Thread {
 	}
 
 	public static void main(String[] args) {
-		KafkaProducerDemo kpd = new KafkaProducerDemo("test", true);
+		KafkaProducerDemo kpd = new KafkaProducerDemo("testJava", true);
 		kpd.start();
 	}
 
