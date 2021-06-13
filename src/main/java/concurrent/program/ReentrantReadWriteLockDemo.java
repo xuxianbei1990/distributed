@@ -84,18 +84,15 @@ public class ReentrantReadWriteLockDemo {
 	private static ReadLock readLock = lock.readLock();
 	private static WriteLock writeLock = lock.writeLock();
 	private static Map<String, String> maps = new HashMap<String, String>();
-	private static CountDownLatch latch = new CountDownLatch(102);
-	private static CyclicBarrier barrier = new CyclicBarrier(102);
 
 	public static void main(String[] args) throws Exception {
 		long beginTime = System.currentTimeMillis();
-		for (int i = 0; i < 100; i++) {
+//		for (int i = 0; i < 100; i++) {
 			new Thread(new ReadThread()).start();
-		}
-		for (int i = 0; i < 2; i++) {
+//		}
+//		for (int i = 0; i < 2; i++) {
 			new Thread(new WriteThread()).start();
-		}
-		latch.await();
+//		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("Consume Time is:" + (endTime - beginTime) + " ms");
 		ReentrantLockDemo1.main();
@@ -105,11 +102,6 @@ public class ReentrantReadWriteLockDemo {
 
 		@Override
 		public void run() {
-			try {
-				barrier.await();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 
 			try {
 				writeLock.lock();
@@ -120,7 +112,6 @@ public class ReentrantReadWriteLockDemo {
 			} finally {
 				writeLock.unlock();
 			}
-			latch.countDown();
 		}
 	}
 	
@@ -128,11 +119,6 @@ public class ReentrantReadWriteLockDemo {
 
 		@Override
 		public void run() {
-			try {
-				barrier.await();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 			try {
 				readLock.lock();
 				maps.get("1");
@@ -142,7 +128,6 @@ public class ReentrantReadWriteLockDemo {
 			} finally {
 				readLock.unlock();
 			}
-			latch.countDown();
 		}
 		
 	}

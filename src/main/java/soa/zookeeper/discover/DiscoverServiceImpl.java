@@ -1,16 +1,15 @@
 package soa.zookeeper.discover;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-
 import soa.zookeeper.register.ZKConfig;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DiscoverServiceImpl implements IDiscoverService {
 	
@@ -41,13 +40,10 @@ public class DiscoverServiceImpl implements IDiscoverService {
 	private void registerWatcher(final String path) {
 		PathChildrenCache childrenCache = new PathChildrenCache(curatorFramework, path, true);
 		PathChildrenCacheListener pccl = new PathChildrenCacheListener() {
-
 			@Override
 			public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
 				repos = curatorFramework.getChildren().forPath(path);
-				
 			}
-			
 		};
 		childrenCache.getListenable().addListener(pccl);
 		try {

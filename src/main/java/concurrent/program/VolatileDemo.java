@@ -8,21 +8,26 @@ package concurrent.program;
  */
 public class VolatileDemo {
 
-    private static int a = 0, x= 0;
-    private static int b = 0, y=0;
+    private static int a = 0, x = 0;
+    private static int b = 0, y = 0;
+
     public static void main(String[] args) throws InterruptedException {
-        Thread t1 = new Thread(()-> {
+//        test();
+    }
+
+    private static void test() throws InterruptedException {
+        Thread t1 = new Thread(() -> {
             a = 1;
             x = b;
         });
         Thread t2 = new Thread(() -> {
-           b = 1;
-           y = a;
+            b = 1;
+            y = a;
         });
         t1.start();
         t2.start();
         t1.join();
         t2.join();
-        System.out.println("x" + x +"y" + y);
+        System.out.println("x" + x + "y" + y);
     }
 }

@@ -9,11 +9,11 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
-public class KafkaConsumerDemo extends Thread {
+public class KafkaConsumerDemo2 extends Thread {
 
     private KafkaConsumer<Integer, String> kafkaConsumer;
 
-    public KafkaConsumerDemo(String topic) {
+    public KafkaConsumerDemo2(String topic) {
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.2.2:9092");//,192.168.2.4:9092,192.168.2.5:9092
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "KafkaConsumerDemo");
@@ -38,7 +38,7 @@ public class KafkaConsumerDemo extends Thread {
             //max.poll.records
             ConsumerRecords<Integer, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<Integer, String> consumerRecord : consumerRecords) {
-                System.out.println("第一个消费者的partition:" +  consumerRecord.partition() + "message receive:" + consumerRecord.value());
+                System.out.println("第三个消费者的partition:" + consumerRecord.partition() + "message receive:" + consumerRecord.value());
 //				kafkaConsumer.commitAsync();
             }
 
@@ -46,7 +46,7 @@ public class KafkaConsumerDemo extends Thread {
     }
 
     public static void main(String[] args) {
-        new KafkaConsumerDemo("testJava").start();
+        new KafkaConsumerDemo2("testJava").start();
 //        TopicPartition topicPartition = new TopicPartition("test", 0);
 //        System.out.println(Arrays.asList(topicPartition));
     }
