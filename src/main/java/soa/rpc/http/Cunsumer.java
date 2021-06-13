@@ -17,6 +17,7 @@ public class Cunsumer {
 		request.setEncode(Encode.UTF8.getIntValue());
 
 		Socket client = new Socket("127.0.0.1", 4567);
+		//这一步是阻塞的
 		OutputStream output = client.getOutputStream();
 
 		ProtocolUtil.writeRequest(output, request);

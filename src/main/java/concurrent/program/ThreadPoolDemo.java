@@ -75,6 +75,7 @@ class ThreadInfo {
 	 * corePoolSize ： 线程池维护线程的最少数量，哪怕是空闲的。 maximumPoolSize ：线程池维护线程的最大数量。
 	 * keepAliveTime ： 线程池维护线程所允许的空闲时间。 unit ： 线程池维护线程所允许的空闲时间的单位。 workQueue ：
 	 * 线程池所使用的缓冲队列，改缓冲队列的长度决定了能够缓冲的最大数量。
+	 * factory()：创建线程的工厂类，RejectedExecutionHandler 拒绝策略
 	 */
 	final ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 600, 30, TimeUnit.SECONDS, queue,
 			Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
