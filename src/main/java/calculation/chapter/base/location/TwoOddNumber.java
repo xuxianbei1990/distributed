@@ -1,4 +1,4 @@
-package calculation.chapter.base;
+package calculation.chapter.base.location;
 
 import java.util.Arrays;
 

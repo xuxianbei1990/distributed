@@ -1,4 +1,4 @@
-package calculation.chapter.base;
+package calculation.chapter.base.location;
 
 /**
  * 一个数组中存在一个奇数，找到这个数

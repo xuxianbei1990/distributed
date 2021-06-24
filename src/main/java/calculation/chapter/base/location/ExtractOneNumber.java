@@ -1,4 +1,4 @@
-package calculation.chapter.base;
+package calculation.chapter.base.location;
 
 /**
  * 提取一个数二进制1的个数
