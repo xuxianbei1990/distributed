@@ -6,6 +6,7 @@ import java.util.Objects;
 
 /**
  * 单向链表
+ *
  * @author: xuxianbei
  * Date: 2021/6/23
  * Time: 16:50
@@ -16,6 +17,11 @@ public class OneWayList<T> {
     private Node<T> head = new Node<>(null);
 
     private int size = 0;
+
+
+    public Node<T> getHead() {
+        return head;
+    }
 
     public int add(T value) {
         if (Objects.isNull(head.getValue())) {
@@ -86,7 +92,7 @@ public class OneWayList<T> {
     }
 
     @Data
-    class Node<T> {
+    public static class Node<T> {
         private T value;
         private Node next;
 
