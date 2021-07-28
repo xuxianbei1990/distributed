@@ -1,4 +1,4 @@
-package calculation.chapter.base.datastructure;
+package calculation.chapter.base.datastructure.recursion;
 
 import java.util.Arrays;
 

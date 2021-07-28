@@ -1,4 +1,4 @@
-package calculation.chapter.base.datastructure;
+package calculation.chapter.base.datastructure.recursion;
 
 /**
  * 题1：求数组arr[L..R]的最大值，递归实现。
