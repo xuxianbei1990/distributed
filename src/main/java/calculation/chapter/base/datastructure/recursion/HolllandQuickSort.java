@@ -2,7 +2,7 @@ package calculation.chapter.base.datastructure.recursion;
 
 import java.util.Arrays;
 
-/** 荷兰国旗问题 给定一个数组arr 和一个整数num ，请把小鱼num的数放在数组的左边，等于num的数放中间，大于num的数放在数组的右边。
+/** 荷兰国旗问题 给定一个数组arr 和一个整数num ，请把小于num的数放在数组的左边，等于num的数放中间，大于num的数放在数组的右边。
  空间复杂度o(1),时间复杂度o(N)
  * @author: xuxianbei
  * Date: 2021/7/28
