@@ -25,23 +25,26 @@ public class TwoOddNumber {
             eor = eor ^ array[i];
         }
         int merge = eor;
+        int eor1 = 0;
         eor = eor & (~eor + 1);
         for (int i = 0; i < array.length; i++) {
-            if ((eor & array[i]) == 0){
-               eor = eor ^ array[i];
+            if ((eor & array[i]) == 0) {
+                eor1 = eor1 ^ array[i];
             }
         }
-        System.out.println(eor + ", " + (eor ^ merge));
+        System.out.println((eor1 ^ merge) + ", " + (eor1));
 
     }
 
     public static void main(String[] args) {
-        int[] ints = {3, 5, 3, 5, 3, 7};
+        int[] ints = {3, 5, 3, 5, 3, 7, 8, 8, 6, 6};
         System.out.println(Arrays.toString(twoOddTimes(ints)));
         execute(ints);
     }
 
     public static int[] twoOddTimes(int[] arrays) {
+
+
         if (arrays == null || arrays.length == 1) {
             return arrays;
         }
