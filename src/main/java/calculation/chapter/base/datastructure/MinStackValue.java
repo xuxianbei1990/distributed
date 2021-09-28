@@ -1,7 +1,7 @@
 package calculation.chapter.base.datastructure;
 
 /**
- *
+ *+
  * 题2：栈，基本功能上，实现返回栈中最小元素的功能。
  * 1）pop, push, getMin时间复杂度都是0（1）
  * 2）设计的栈类型可以使用现成的栈结构
@@ -31,10 +31,18 @@ public class MinStackValue {
        return pop()[0];
     }
 
+    /**
+     * 获取一个值（当前值和最小值）
+     * @return
+     */
     public int[] pop() {
         return new int[]{stackDate.pop(), stackHelp.pop()};
     }
 
+    /**
+     * 获取最小值
+     * @return
+     */
     public int popMin() {
         return pop()[1];
     }

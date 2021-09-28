@@ -109,17 +109,35 @@ public class OneWayList<T> {
         oneWayList.add(2);
         oneWayList.add(3);
         System.out.println(oneWayList.toString());
-        oneWayList.delete(3);
+        oneWayList.reverse();
         System.out.println(oneWayList.toString());
-        oneWayList.delete(2);
-        System.out.println(oneWayList.toString());
-        oneWayList.delete(0);
-        System.out.println(oneWayList.toString());
-        oneWayList.add(4);
-        oneWayList.add(2);
-        oneWayList.add(3);
-        System.out.println(oneWayList.toString());
-        System.out.println(oneWayList.get(4));
+
+//        oneWayList.delete(3);
+//        System.out.println(oneWayList.toString());
+//        oneWayList.delete(2);
+//        System.out.println(oneWayList.toString());
+//        oneWayList.delete(0);
+//        System.out.println(oneWayList.toString());
+//        oneWayList.add(4);
+//        oneWayList.add(2);
+//        oneWayList.add(3);
+//        System.out.println(oneWayList.toString());
+//        System.out.println(oneWayList.get(4));
+    }
+
+    public void reverse() {
+        Node prev = null;
+        Node nodeNow = head;
+
+        while (nodeNow != null) {
+            Node node1 = nodeNow.getNext();
+            nodeNow.setNext(prev);
+            prev = nodeNow;
+            if (node1 == null) {
+                head = nodeNow;
+            }
+            nodeNow = node1;
+        }
     }
 
 }

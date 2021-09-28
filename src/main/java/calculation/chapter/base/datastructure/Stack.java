@@ -24,6 +24,10 @@ public class Stack {
         limit = size;
     }
 
+    public boolean isEmpty() {
+        return index == 0;
+    }
+
 
     public int push(int value) {
         if (index <= limit) {
