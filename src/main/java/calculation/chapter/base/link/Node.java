@@ -2,6 +2,8 @@ package calculation.chapter.base.link;
 
 import lombok.Data;
 
+import java.util.Objects;
+
 /**
  * @author: xuxianbei
  * Date: 2021/6/24
@@ -18,9 +20,25 @@ public class Node<T> {
     public Node() {
     }
 
+    public Node(T data) {
+        this.data = data;
+    }
+
     public Node(T data, Node<T> next) {
         this.data = data;
         this.next = next;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node<?> node = (Node<?>) o;
+        return data.equals(node.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(data);
+    }
 }
