@@ -2,6 +2,11 @@ package calculation.chapter.base.link;
 
 import lombok.Data;
 import lombok.SneakyThrows;
+import org.omg.CORBA.MARSHAL;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 题15：一种特殊的单链表点类描述如下：
@@ -23,11 +28,34 @@ import lombok.SneakyThrows;
  */
 public class RandomLink {
 
+
     @Data
-    static class Node implements Cloneable {
-         int value;
-         Node next;
-         Node rand;
+    static class Node {
+        int value;
+        Node next;
+        Node rand;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node node = (Node) o;
+            return value == node.value &&
+                    Objects.equals(next, node.next);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value, next);
+        }
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "value=" + value +
+                    ", next=" + next +
+                    '}';
+        }
 
         Node(int value) {
             this.value = value;
@@ -52,7 +80,7 @@ public class RandomLink {
     public Node execute(Node header) {
         Node index = header;
         while (index != null) {
-            //代码出在这里，实际链表没法克隆
+            //代码问题出在这里，实际链表没法克隆
             Node help = index.clone();
             index.next = help;
             index = help.next;
@@ -60,13 +88,37 @@ public class RandomLink {
         Node result = header.next;
         Node index1 = header;
         Node index2 = header.next;
-        while (index2 != null){
+        while (index2 != null) {
             index1.next = index2.next;
             index2.next = index1.next.next;
             index1 = index1.next;
             index2 = index2.next;
         }
         return result;
+    }
+
+    public Node hashMapExecute(Node header) {
+        if (header == null) {
+            return header;
+        }
+        Node index = header;
+        Map<Node, Node> map = new HashMap();
+        while (index != null) {
+            map.put(index, new Node(index.value));
+            index = index.next;
+        }
+        Node header1 = map.get(header);
+        index = header.next;
+        Node cur = header;
+        Node index2 = header1;
+        while (index != null) {
+            index2.rand = map.get(cur.getRand());
+            index2.next = map.get(index);
+            cur = index;
+            index = index.getNext();
+            index2 = index2.next;
+        }
+        return header1;
     }
 
     public static void main(String[] args) {
@@ -94,8 +146,8 @@ public class RandomLink {
         node7.rand = node1;
 
         RandomLink randomLink = new RandomLink();
-       System.out.println(randomLink.execute(node1));
-
+        System.out.println(node1);
+        System.out.println(randomLink.hashMapExecute(node1));
 
     }
 
