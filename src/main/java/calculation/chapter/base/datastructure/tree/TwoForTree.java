@@ -45,23 +45,6 @@ public class TwoForTree {
         System.out.println();
     }
 
-//    public void preForwhile(TreeItem<Integer> header) {
-//        TreeItem<Integer> index = header;
-//        LinkedList<TreeItem<Integer>> linkedList = new LinkedList();
-//        linkedList.add(index);
-//        while (linkedList.size() > 0) {
-//            TreeItem<Integer> treeItem = linkedList.pop();
-//            System.out.print(treeItem.getData());
-//            if (treeItem.getLeft() != null) {
-//                linkedList.add(treeItem.getLeft());
-//            }
-//            if (treeItem.getRight() != null) {
-//                linkedList.add(treeItem.getRight());
-//            }
-//        }
-//    }
-
-
     public void midFor(TreeItem<Integer> header) {
         if (header == null) {
             return;
@@ -145,6 +128,5 @@ public class TwoForTree {
         twoForTree.sufFor(treeItem1);
         System.out.println();
         twoForTree.sufForWhile(treeItem1);
-
     }
 }
