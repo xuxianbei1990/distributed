@@ -76,7 +76,35 @@ public class TwoForTreeStorey {
             maxStorey = cur;
         }
         return sum;
+    }
 
+    public int maxStoreyNumNoMap(TreeItem<Integer> header) {
+        TreeItem<Integer> index = header;
+        TreeItem<Integer> nextCriticalPoint = null, curCriticalPoint;
+        LinkedList<TreeItem<Integer>> linkedList = new LinkedList();
+        linkedList.add(index);
+        curCriticalPoint = index;
+        int max = 0;
+        int sum = 0;
+        while (!linkedList.isEmpty() && index != null) {
+            index = linkedList.pop();
+            sum++;
+            if (index.getLeft() != null) {
+                nextCriticalPoint = index.getLeft();
+                linkedList.add(nextCriticalPoint);
+            }
+            if (index.getRight() != null) {
+                nextCriticalPoint = index.getRight();
+                linkedList.add(nextCriticalPoint);
+            }
+            if (index == curCriticalPoint) {
+                curCriticalPoint = nextCriticalPoint;
+                max = Math.max(sum, max);
+                sum = 0;
+            }
+        }
+        max = Math.max(sum, max);
+        return max;
     }
 
     public static void main(String[] args) {
@@ -96,5 +124,6 @@ public class TwoForTreeStorey {
         TwoForTreeStorey twoForTreeStorey = new TwoForTreeStorey();
         twoForTreeStorey.storey(treeItem1);
         System.out.println(twoForTreeStorey.maxStoreyNum(treeItem1));
+        System.out.println(twoForTreeStorey.maxStoreyNumNoMap(treeItem1));
     }
 }
