@@ -11,8 +11,8 @@ import lombok.Data;
 @Data
 public class TreeItem<T> {
 
-    private TreeItem left;
-    private TreeItem right;
+    private TreeItem<T> left;
+    private TreeItem<T> right;
     private T data;
 
     public TreeItem(T data) {

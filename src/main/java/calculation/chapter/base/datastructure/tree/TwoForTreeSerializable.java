@@ -1,7 +1,9 @@
 package calculation.chapter.base.datastructure.tree;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * 题3：二叉树的序列化和反序列化
@@ -15,35 +17,88 @@ import java.util.List;
  */
 public class TwoForTreeSerializable {
 
-    public void recursionTree(TreeItem<Integer> treeItem, List<Integer> list) {
+    public void recursionTree(TreeItem<Integer> treeItem, Queue<Integer> list) {
         if (treeItem == null) {
-            return;
+            list.add(null);
+        } else {
+            list.add(treeItem.getData());
+            recursionTree(treeItem.getLeft(), list);
+            recursionTree(treeItem.getRight(), list);
         }
-        list.add(treeItem.getData());
-        recursionTree(treeItem.getLeft(), list);
-        recursionTree(treeItem.getRight(), list);
     }
 
-    public List<Integer> serializable(TreeItem<Integer> treeItem) {
-        List<Integer> list = new ArrayList<>();
-        recursionTree(treeItem, list);
-        return list;
+    public Queue<Integer> serializable(TreeItem<Integer> treeItem) {
+        Queue<Integer> Queue = new LinkedList<>();
+        recursionTree(treeItem, Queue);
+        return Queue;
     }
 
-    int index = 0;
-
-    public TreeItem<Integer> unSerializable(List<Integer> list) {
-        if (index >= list.size()) {
+    public TreeItem<Integer> unSerializable(Queue<Integer> queue) {
+        Integer value = queue.poll();
+        if (value == null) {
             return null;
         }
-        TreeItem<Integer> header = new TreeItem<>(list.get(index));
-        index++;
-        if (header == null) {
-            return header;
-        }
-        header.setLeft(unSerializable(list));
-        header.setRight(unSerializable(list));
+        TreeItem<Integer> header = new TreeItem<>(value);
+        header.setLeft(unSerializable(queue));
+        header.setRight(unSerializable(queue));
         return header;
+    }
+
+    public Queue<Integer> serializableStorey(TreeItem<Integer> header) {
+        if (header == null) {
+            return null;
+        }
+        TreeItem<Integer> index = header;
+        Queue<Integer> result = new LinkedList<>();
+        Queue<TreeItem<Integer>> help = new LinkedList<>();
+        help.add(index);
+        result.add(index.getData());
+        while (!help.isEmpty()) {
+            index = help.poll();
+            if (index.getLeft() != null) {
+                help.add(index.getLeft());
+                result.add(index.getLeft().getData());
+            } else {
+                result.add(null);
+            }
+            if (index.getRight() != null) {
+                help.add(index.getRight());
+                result.add(index.getRight().getData());
+            } else {
+                result.add(null);
+            }
+        }
+        return result;
+    }
+
+
+    public TreeItem<Integer> unSerializableStorey(Queue<Integer> queue) {
+        if (queue == null) {
+            return null;
+        }
+        Queue<TreeItem<Integer>> help = new LinkedList<>();
+        Integer value = queue.poll();
+        TreeItem<Integer> header = new TreeItem<>(value);
+        help.add(header);
+        while (!help.isEmpty()) {
+            TreeItem<Integer> index = help.poll();
+            index.setLeft(generateTreeItem(queue.poll()));
+            index.setRight(generateTreeItem(queue.poll()));
+            if (index.getLeft() != null) {
+                help.add(index.getLeft());
+            }
+            if (index.getRight() != null) {
+                help.add(index.getRight());
+            }
+        }
+        return header;
+    }
+
+    public TreeItem<Integer> generateTreeItem(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        return new TreeItem<>(value);
     }
 
 
@@ -62,9 +117,12 @@ public class TwoForTreeSerializable {
         treeItem3.setLeft(treeItem7);
         treeItem3.setRight(treeItem8);
         TwoForTreeSerializable twoForTreeSerializable = new TwoForTreeSerializable();
-        List<Integer> list = twoForTreeSerializable.serializable(treeItem1);
-        System.out.println(list);
-        System.out.println(twoForTreeSerializable.unSerializable(list));
+        Queue<Integer> queue = twoForTreeSerializable.serializable(treeItem1);
+        System.out.println(queue);
+        System.out.println(twoForTreeSerializable.unSerializable(queue));
+        queue = twoForTreeSerializable.serializableStorey(treeItem1);
+        System.out.println(queue);
+        System.out.println(twoForTreeSerializable.unSerializableStorey(queue));
     }
 
 }
