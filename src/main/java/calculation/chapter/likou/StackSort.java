@@ -47,6 +47,20 @@ public class StackSort {
         }
     }
 
+    public void sortStackByStack(Stack<Integer> stack) {
+        Stack<Integer> help = new Stack<>();
+        while (!stack.isEmpty()) {
+            int cur = stack.pop();
+            while (!help.isEmpty() && help.peek() > cur) {
+                stack.push(help.pop());
+            }
+            help.push(cur);
+        }
+        while (!help.isEmpty()){
+            stack.push(help.pop());
+        }
+    }
+
     public static void main(String[] args) {
         Stack<Integer> stack = new Stack<>();
         stack.add(3);
@@ -58,6 +72,7 @@ public class StackSort {
         stack.add(0);
         StackSort stackSort = new StackSort();
         System.out.println(stackSort.execute(stack));
+
 
     }
 
