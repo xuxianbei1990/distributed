@@ -30,12 +30,14 @@ public class CategoryDemo {
      * @return
      */
     public List<Map<Integer, List<CategoryItem>>> execute(List<CategoryItem> categoryItems) {
-
+        //O(N)
         Map<Integer, List<CategoryItem>> listMap = categoryItems.stream().collect(Collectors.groupingBy(inventoryCategoryNew -> inventoryCategoryNew.getParentId() == null ? 0 : inventoryCategoryNew.getParentId()));
+
         List<CategoryItem> oneList = listMap.get(0);
         List<Map<Integer, List<CategoryItem>>> result = new ArrayList<>();
         Map<Integer, List<CategoryItem>> oneMap = new HashMap();
         result.add(oneMap);
+        // <= O(N)
         for (CategoryItem inventoryCategoryNew : oneList) {
             oneMap.put(inventoryCategoryNew.getId(), Arrays.asList(inventoryCategoryNew));
             process(inventoryCategoryNew.getId(), listMap, result, 1, 0);
