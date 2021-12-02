@@ -1,7 +1,6 @@
 package calculation.chapter.base.datastructure.tree;
 
 import lombok.Data;
-import lombok.Getter;
 
 /**
  * 2^h - 1 = sum(N)
