@@ -1,13 +1,18 @@
 package calculation.chapter.three;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * 选择排序算法
  * 当原始数组大部分元素无序时，选择排序性能最优。
- *
+ * <p>
  * 我家房子拆迁，明天去签合同，请一天事假
  * O（n^2）
+ *
  * @author: xuxianbei
  * Date: 2019/12/16
  * Time: 9:31
@@ -45,13 +50,36 @@ public class ChooseSort {
         }
     }
 
+    public static <T> void practice(List<T> array, Comparator<T> comparator) {
+        for (int i = 0; i < array.size(); i++) {
+            int min = i;
+            for (int j = i + 1; j < array.size(); j++) {
+                if (comparator.compare(array.get(j), array.get(min)) > 0) {
+                    min = j;
+                }
+            }
+            swap(i, min, array);
+        }
+        System.out.println(array);
+    }
+
+    private static <T> void swap(int a, int b, List<T> array) {
+        T temp = array.get(a);
+        array.set(a, array.get(b));
+        array.set(b, temp);
+    }
+
+
     public static void main(String[] args) {
         int[] array = {100, 45, 36, 21, 17, 13, 7};
         ChooseSort chooseSort = new ChooseSort(array);
         System.out.println("排序前:");
         chooseSort.display();
         chooseSort.sort();
+
         System.out.println("排序后:");
+        Integer[] array2 = {100, 45, 36, 21, 17, 13, 7};
+        chooseSort.practice(new ArrayList<>(Arrays.asList(array2)), (a, b) -> a > b ? 1 : 0);
         chooseSort.display();
     }
 }

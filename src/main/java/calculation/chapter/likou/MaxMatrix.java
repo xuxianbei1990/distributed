@@ -55,14 +55,14 @@ public class MaxMatrix {
 
     public static void main(String[] args) {
         MaxMatrix maxMatrix = new MaxMatrix();
-        int[][] map = new int[10][10];
-        for (int i = 0; i < map.length; i++) {
-            for (int i1 = 0; i1 < map[i].length; i1++) {
-                map[i][i1] = 1;
-            }
-        }
+        int[][] map = new int[][]{{1, 1, 0, 0}, {0, 0, 1, 1}, {1, 1, 1, 1}, {0, 0, 1, 0}, {1, 1, 0, 0}};
+
         System.out.println(maxMatrix.maxRecSize(map));
     }
 
+    public int execute(int[][] array) {
+
+        return 0;
+    }
 
 }
