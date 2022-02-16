@@ -26,6 +26,7 @@ public class MinDistance {
     public void execute(List<Node> nodeList, Node nodeA, Node nodeB) {
         List<NodeMinDistance> nodeMinDistances = new ArrayList<>();
         nodeMinDistances.add(new NodeMinDistance(nodeA, 0));
+
         Node index = nodeA;
         for (Node node : nodeList) {
             if (!node.equals(index)) {
@@ -35,18 +36,25 @@ public class MinDistance {
         }
         for (int i = 1; i < nodeMinDistances.size(); i++) {
             NodeMinDistance nodeMinDistanceB = nodeMinDistances.get(i);
-            for (int j = 1; j < nodeMinDistances.size(); j++) {
+            for (int j = i; j < nodeMinDistances.size(); j++) {
                 NodeMinDistance nodeMinDistanceC = nodeMinDistances.get(j);
                 if (nodeMinDistanceB.node.equals(nodeMinDistanceC.node)) {
                     continue;
                 }
                 Integer distance = getWeight(nodeMinDistanceB.node.getEdges(), nodeMinDistanceC.node);
                 if (distance > -1) {
-                    nodeMinDistanceB.minDistance + distance;
+                    if (nodeMinDistanceC.minDistance > -1) {
+                        nodeMinDistanceC.minDistance = Math.min(nodeMinDistanceC.minDistance, nodeMinDistanceB.minDistance + distance);
+                    } else {
+                        nodeMinDistanceC.minDistance = nodeMinDistanceB.minDistance + distance;
+                    }
                 }
             }
         }
-
+        Optional<NodeMinDistance> nodeMinDistanceOptional = nodeMinDistances.stream().filter(t -> t.node.equals(nodeB)).findFirst();
+        if (nodeMinDistanceOptional.isPresent()) {
+            System.out.println(nodeMinDistanceOptional.get().minDistance);
+        }
     }
 
     private Integer getWeight(List<Edge> edges, Node node) {
