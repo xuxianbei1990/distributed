@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
- * 调表排序
+ * 跳表排序
  * User: xuxianbei
  * Date: 2019/11/25
  * Time: 14:02

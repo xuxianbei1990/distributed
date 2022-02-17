@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -381,5 +382,11 @@ public class MyHashMap<K, V> {
             } while (p != null);
             return null;
         }
+    }
+
+    public static void main(String[] args) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("1", "1");
+        map.remove("1");
     }
 }

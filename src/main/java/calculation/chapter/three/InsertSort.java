@@ -44,7 +44,7 @@ public class InsertSort {
     }
 
     public static void main(String[] args) {
-        int[] array = {38, 65, 97, 76, 13, 27, 49};
+        int[] array = {7,6,5,4,3,2,1};
         InsertSort insertSort = new InsertSort(array);
         System.out.println("排序前的数据为：");
         insertSort.display();
