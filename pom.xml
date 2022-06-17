@@ -78,7 +78,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.47</version>
+            <version>1.2.83</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -149,7 +149,7 @@
             <!--alibaba-->
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.31</version>
+            <version>1.2.83</version>
         </dependency>
         <dependency>
             <groupId>com.baidu</groupId>
