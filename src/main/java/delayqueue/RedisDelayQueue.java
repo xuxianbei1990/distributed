@@ -6,6 +6,8 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
 import redis.clients.jedis.Tuple;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -72,12 +74,6 @@ public class RedisDelayQueue {
         }
     }
 
-
-    public static void main(String[] args) {
-//        singleThread();
-        unSafeMultiThread();
-
-    }
 
     // 非线程安全
     //解决方案有3：1：用分布式锁，但是用分布式锁，性能下降了，该方案不细说

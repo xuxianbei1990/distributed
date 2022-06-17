@@ -65,9 +65,9 @@ public class PartMin {
         //游标可以代替数据拷贝
         while (left < right) {
             int min = (right - left) / 2;
-            if (array[min] < array[min + 1]) {
+            if (array[min] > array[min + 1]) {
                 right = right - 1;
-            } else if (array[min - 1] > array[min]){
+            } else if (array[min - 1] < array[min]){
                 left = left + 1;
             } else {
                 return min;

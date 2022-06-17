@@ -119,7 +119,7 @@ public class QuickSort extends CommonCalc {
         }
         //pivot和指针重合点交换
         int p = arr[left];
-        arr[left] = arr[startIndex];
+        arr[left] = pivot;
         arr[startIndex] = p;
         return left;
     }
