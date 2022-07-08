@@ -1,11 +1,17 @@
 package calculation.chapter.practise;
 
+import calculation.chapter.base.datastructure.tree.TreeItem;
 import calculation.chapter.base.link.Node;
+import calculation.chapter.base.link.RandomLink;
+import com.alibaba.fastjson.JSONObject;
+import lombok.Data;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import serializable.Student;
+import sun.reflect.generics.tree.Tree;
 
 import javax.tools.StandardJavaFileManager;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -478,8 +484,8 @@ public class CodeList {
 
         for (int i = 1; i <= bucket; i++) {
             for (String s : help) {
-               int key = Integer.valueOf(s.substring(bucket - i, bucket - i + 1));
-               lists.get(key).add(s);
+                int key = Integer.valueOf(s.substring(bucket - i, bucket - i + 1));
+                lists.get(key).add(s);
             }
             help.clear();
             for (List<String> list : lists) {
@@ -492,6 +498,406 @@ public class CodeList {
             }
         }
         System.out.println(help.toString());
+    }
+
+    class LinkedNode {
+        LinkedNode next;
+        String value;
+    }
+
+    private void fastSlowNode(LinkedNode header) {
+        if (header == null || header.next == null || header.next.next == null) {
+            return;
+        }
+        LinkedNode slow = header.next;
+        LinkedNode fast = header.next.next;
+        while (slow.next != null && fast.next.next != null) {
+            slow = header.next;
+            fast = header.next.next;
+        }
+        System.out.println(slow);
+    }
+
+    private boolean judgePalindromeStruct(LinkedNode header) {
+        if (header == null) {
+            return false;
+        }
+        Stack<LinkedNode> stringStack = new Stack<>();
+        LinkedNode index = header;
+        while (index != null) {
+            stringStack.push(index);
+            index = index.next;
+        }
+
+        index = header;
+        while (!stringStack.isEmpty()) {
+            LinkedNode value = stringStack.pop();
+            if (!value.equals(index)) {
+                return false;
+            }
+            index = index.next;
+        }
+        return true;
+    }
+
+
+    @Data
+    static class RandomNode {
+        int value;
+        RandomNode next;
+        RandomNode rand;
+
+        public RandomNode(int value) {
+            this.value = value;
+        }
+    }
+
+    private RandomNode copy(RandomNode header) {
+        if (header == null) {
+            return null;
+        }
+        Map<RandomNode, RandomNode> map = new HashMap<>();
+        RandomNode index = header;
+        while (index != null) {
+            map.put(index, new RandomNode(index.value));
+            index = index.next;
+        }
+        index = header;
+        RandomNode header1 = map.get(index);
+        RandomNode index1 = header1;
+        while (index != null) {
+            index1.setNext(map.get(index.next));
+            index1.setRand(map.get(index.rand));
+            index = index.next;
+            index1 = index1.getNext();
+        }
+        return header1;
+    }
+
+    private void forTree(TreeItem treeItem) {
+        if (treeItem == null) {
+            return;
+        }
+        //System.out.println("Pre")
+        forTree(treeItem.getLeft());
+        //System.out.println("mid")
+        forTree(treeItem.getRight());
+        //System.out.println("after")
+    }
+
+    private void stackForTree1(TreeItem treeItem) {
+        if (treeItem == null) {
+            return;
+        }
+        Stack<TreeItem> stack = new Stack<>();
+        TreeItem index = treeItem;
+        stack.push(index);
+        while (!stack.isEmpty()) {
+            index = stack.pop();
+            if (index != null) {
+                System.out.println(index.getData());
+            }
+            if (index.getRight() != null) {
+                index = index.getRight();
+                stack.push(index);
+            }
+            if (index.getLeft() != null) {
+                index = index.getLeft();
+                stack.push(index);
+            }
+        }
+    }
+
+
+    private void stackForTree2(TreeItem treeItem) {
+        Stack<TreeItem> stack = new Stack<>();
+        while (treeItem != null && !stack.isEmpty()) {
+            if (treeItem != null) {
+                stack.push(treeItem);
+                if (treeItem.getLeft() != null) {
+                    treeItem = treeItem.getLeft();
+                }
+            } else {
+                treeItem = stack.pop();
+                System.out.println(treeItem.getData());
+                treeItem = treeItem.getRight();
+            }
+        }
+    }
+
+    private void stackForTree3(TreeItem treeItem) {
+        Stack<TreeItem> stack1 = new Stack<>();
+        Stack<TreeItem> stack2 = new Stack<>();
+        stack1.push(treeItem);
+        while (treeItem != null) {
+            TreeItem treeItem1 = stack1.pop();
+            if (treeItem1.getLeft() != null) {
+                stack1.push(treeItem1.getLeft());
+            }
+            if (treeItem1.getRight() != null) {
+                stack1.push(treeItem1.getRight());
+            }
+            stack2.push(treeItem1);
+        }
+        while (!stack2.isEmpty()) {
+            System.out.println(stack2.pop());
+        }
+    }
+
+    private void horizontalTraverse(TreeItem treeItem) {
+        LinkedList<TreeItem> linkedList = new LinkedList();
+        linkedList.push(treeItem);
+        while (!linkedList.isEmpty()) {
+            TreeItem index = linkedList.pop();
+            System.out.println(index.getData());
+            if (index.getLeft() != null) {
+                linkedList.push(index.getLeft());
+            }
+            if (index.getRight() != null) {
+                linkedList.push(index.getRight());
+            }
+        }
+    }
+
+    private void maxStoreyNodeNum(TreeItem treeItem) {
+        LinkedList<TreeItem> linkedList = new LinkedList<>();
+        Map<TreeItem, Integer> map = new HashMap<>();
+        int cur = 0;
+        int max = 0;
+        int maxStorey = 0;
+        map.put(treeItem, cur);
+        while (!linkedList.isEmpty()) {
+            TreeItem index = linkedList.pop();
+            Integer temp = map.get(index);
+            if (temp == cur) {
+                max++;
+            } else {
+                cur++;
+                maxStorey = Math.max(max, maxStorey);
+                max = 1;
+            }
+            temp++;
+            if (index.getLeft() != null) {
+                linkedList.push(index.getLeft());
+                map.put(index.getLeft(), temp);
+            }
+            if (index.getRight() != null) {
+                linkedList.push(index.getRight());
+                map.put(index.getRight(), temp);
+            }
+        }
+        maxStorey = Math.max(max, maxStorey);
+        System.out.println(maxStorey);
+    }
+
+    private void maxStoreyNodeNum2(TreeItem treeItem) {
+        LinkedList<TreeItem> treeItems = new LinkedList<>();
+        treeItems.push(treeItem);
+        TreeItem currentNode = treeItem;
+        TreeItem rightEndNodex = null;
+        int sum = 0;
+        int max = 0;
+        while (!treeItems.isEmpty()) {
+            TreeItem index = treeItems.pop();
+            sum++;
+            if (index.getLeft() != null) {
+                rightEndNodex = index.getLeft();
+                treeItems.push(rightEndNodex);
+            }
+            if (index.getRight() != null) {
+                rightEndNodex = index.getRight();
+                treeItems.push(rightEndNodex);
+            }
+            if (index == currentNode) {
+                currentNode = rightEndNodex;
+                max = Math.max(max, sum);
+                sum = 0;
+            }
+        }
+        max = Math.max(max, sum);
+        System.out.println(max);
+    }
+
+    private void serializableTree(TreeItem<Integer> treeItem) {
+        Queue<Integer> list = new LinkedList<>();
+        preTree(treeItem, list);
+        System.out.println(JSONObject.toJSON(list));
+    }
+
+    private void preTree(TreeItem<Integer> treeItem, Queue<Integer> list) {
+        if (treeItem == null) {
+            return;
+        }
+        list.add(treeItem.getData());
+        preTree(treeItem.getLeft(), list);
+        preTree(treeItem.getRight(), list);
+    }
+
+    private void unSerializableTree(Queue<Integer> list) {
+        TreeItem treeItem = unPreTree(list);
+    }
+
+    private TreeItem unPreTree(Queue<Integer> queue) {
+        Integer index = queue.poll();
+        if (index == null) {
+            return null;
+        }
+        TreeItem treeItem = new TreeItem(index);
+        treeItem.setLeft(unPreTree(queue));
+        treeItem.setRight(unPreTree(queue));
+        return treeItem;
+    }
+
+    private void printTree(TreeItem<Integer> treeItem, Integer level) {
+        if (treeItem == null) {
+            return;
+        }
+        printTree(treeItem.getRight(), ++level);
+        System.out.println(treeItem.getData());
+        printTree(treeItem.getLeft(), level);
+    }
+
+    private TreeItem nextTreeNode(TreeItem treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
+
+        if (treeItem.getRight() != null) {
+            TreeItem index = treeItem.getRight();
+            while (index.getLeft() != null) {
+                index = index.getLeft();
+            }
+            return index;
+        }
+        if (treeItem == treeItem.getParent().getRight()) {
+            TreeItem index = treeItem.getParent();
+            while (index == index.getParent().getRight()) {
+                index = index.getParent();
+            }
+            return index.getParent();
+        }
+        if (treeItem == treeItem.getParent().getLeft()) {
+            return treeItem.getParent();
+        }
+        return null;
+    }
+
+
+    private static void paperHalfOff(int n) {
+        if (n == 0) {
+            return;
+        }
+//        TreeItem<String> treeItem = new TreeItem<>("凹");
+//        fillTreeItem(treeItem, 0, n);
+
+        midPaper(0, n, "凹");
+    }
+
+    private static void midPaper(int i, int n, String value) {
+        if (i >= n) {
+            return;
+        }
+        midPaper(++i, n, "凹");
+        System.out.println(value);
+        midPaper(i, n, "凸");
+    }
+
+    private static TreeItem fillTreeItem(TreeItem<String> treeItem, int i, int storey) {
+        if (i >= storey) {
+            return null;
+        }
+        treeItem.setLeft(fillTreeItem(new TreeItem<>("凹"), ++i, storey));
+        treeItem.setRight(fillTreeItem(new TreeItem<>("凸"), i, storey));
+        return treeItem;
+    }
+
+
+    static class BalanceTreeInfo {
+        Integer height = 0;
+        boolean balance;
+    }
+
+    private static boolean isBalanceTree(TreeItem<Integer> treeItem) {
+        BalanceTreeInfo balanceTreeInfo = process(treeItem);
+        return balanceTreeInfo.balance;
+    }
+
+    private static BalanceTreeInfo process(TreeItem<Integer> treeItem) {
+        if (treeItem == null) {
+            BalanceTreeInfo balanceTreeInfo = new BalanceTreeInfo();
+            balanceTreeInfo.balance = true;
+            balanceTreeInfo.height = 0;
+            return balanceTreeInfo;
+        }
+        BalanceTreeInfo balanceTreeInfo = new BalanceTreeInfo();
+        BalanceTreeInfo balanceTreeInfoLeft = process(treeItem.getLeft());
+        BalanceTreeInfo balanceTreeInfoRight = process(treeItem.getRight());
+        if (balanceTreeInfoLeft.balance && balanceTreeInfoRight.balance
+                && Math.abs(balanceTreeInfoLeft.height - balanceTreeInfoRight.height) <= 1) {
+            balanceTreeInfo.balance = true;
+        } else {
+            balanceTreeInfo.balance = false;
+        }
+        balanceTreeInfo.height = Math.max(balanceTreeInfoLeft.height, balanceTreeInfoLeft.height) + 1;
+        return balanceTreeInfo;
+    }
+
+    static class DistanceTreeInfo {
+        int height;
+        int maxDistance;
+    }
+
+    private static Integer distanceTree(TreeItem treeItem) {
+        DistanceTreeInfo resutl = process2(treeItem);
+        return resutl.maxDistance;
+    }
+
+    private static DistanceTreeInfo process2(TreeItem treeItem) {
+        if (treeItem == null) {
+            DistanceTreeInfo distanceTreeInfo = new DistanceTreeInfo();
+            distanceTreeInfo.height = 0;
+            distanceTreeInfo.maxDistance = 0;
+            return distanceTreeInfo;
+        }
+        DistanceTreeInfo distanceTreeInfo = new DistanceTreeInfo();
+        DistanceTreeInfo distanceTreeInfoLeft = process2(treeItem.getLeft());
+        DistanceTreeInfo distanceTreeInfoRight = process2(treeItem.getRight());
+        distanceTreeInfo.height = distanceTreeInfoLeft.height + 1;
+        distanceTreeInfo.maxDistance = Math.max(Math.max(distanceTreeInfoLeft.maxDistance, distanceTreeInfoRight.maxDistance),
+                distanceTreeInfoLeft.height + distanceTreeInfoRight.height + 1);
+        return distanceTreeInfo;
+    }
+
+    static class MaxSonTree {
+        boolean isSearch;
+        TreeItem<Integer> header;
+        Integer min = 0;
+        Integer max = 0;
+        Integer sum = 0;
+
+        public MaxSonTree(boolean isSearch) {
+            this.isSearch = isSearch;
+        }
+    }
+
+    private static TreeItem<Integer> maxSonTree(TreeItem<Integer> header) {
+        process3(header);
+    }
+
+    private static MaxSonTree process3(TreeItem<Integer> header) {
+        if (header == null) {
+            return new MaxSonTree(true);
+        }
+        MaxSonTree left = process3(header.getLeft());
+        MaxSonTree right = process3(header.getRight());
+        MaxSonTree maxSonTree = new MaxSonTree(false);
+        if (left.isSearch && right.isSearch && header.getData() >= header.getLeft().getData() &&
+                header.getData() <= header.getRight().getData()) {
+            maxSonTree.isSearch = true;
+            maxSonTree.header = header;
+        }
+        maxSonTree.sum = 
+
     }
 
 }

@@ -16,6 +16,7 @@ public class TreeItem<T> {
     private TreeItem<T> left;
     private TreeItem<T> right;
     private T data;
+    private TreeItem<T> parent;
 
     public TreeItem(T data) {
         this.data = data;
