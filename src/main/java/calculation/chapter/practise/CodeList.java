@@ -1,17 +1,14 @@
 package calculation.chapter.practise;
 
+import calculation.chapter.base.datastructure.tree.MultiTreeHappy;
 import calculation.chapter.base.datastructure.tree.TreeItem;
 import calculation.chapter.base.link.Node;
-import calculation.chapter.base.link.RandomLink;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import serializable.Student;
-import sun.reflect.generics.tree.Tree;
 
-import javax.tools.StandardJavaFileManager;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -880,24 +877,172 @@ public class CodeList {
         }
     }
 
-    private static TreeItem<Integer> maxSonTree(TreeItem<Integer> header) {
-        process3(header);
+    private static MaxSonTree maxSonTree(TreeItem<Integer> header) {
+        return process3(header);
     }
 
     private static MaxSonTree process3(TreeItem<Integer> header) {
         if (header == null) {
             return new MaxSonTree(true);
         }
+        if (header.getData() == null) {
+            header.setData(0);
+        }
         MaxSonTree left = process3(header.getLeft());
         MaxSonTree right = process3(header.getRight());
         MaxSonTree maxSonTree = new MaxSonTree(false);
-        if (left.isSearch && right.isSearch && header.getData() >= header.getLeft().getData() &&
-                header.getData() <= header.getRight().getData()) {
-            maxSonTree.isSearch = true;
-            maxSonTree.header = header;
-        }
-        maxSonTree.sum = 
+        maxSonTree.max = Math.max(right.max, header.getData());
+        maxSonTree.min = Math.max(left.min, header.getData());
 
+        if (left.header == null && right.header == null) {
+            maxSonTree.isSearch = true;
+        }
+        if (left.isSearch && right.isSearch && header.getData() >= left.max &&
+                header.getData() <= right.min) {
+            maxSonTree.isSearch = true;
+        } else {
+            int sum = Math.max(left.sum, right.sum);
+            maxSonTree.header = sum == left.sum ? left.header : right.header;
+        }
+        if (maxSonTree.isSearch) {
+            maxSonTree.header = header;
+            maxSonTree.sum = left.sum + right.sum + 1;
+        }
+        return maxSonTree;
     }
+
+
+    @Data
+    static class EmployeeHappy {
+        Integer happy;
+        List<EmployeeHappy> subs = new ArrayList<>();
+
+        public EmployeeHappy(Integer happy) {
+            this.happy = happy;
+        }
+    }
+
+    @Data
+    static class HappyInfo {
+        private Integer happy;
+        private Integer happySum = 0;
+
+        public HappyInfo(Integer happy) {
+            this.happy = happy;
+        }
+    }
+
+    private static HappyInfo maxHappy(EmployeeHappy header) {
+        if (header == null) {
+            return new HappyInfo(0);
+        }
+        if (CollectionUtils.isEmpty(header.getSubs())) {
+            return new HappyInfo(header.getHappy());
+        }
+        List<HappyInfo> list = new ArrayList<>();
+        for (EmployeeHappy sub : header.getSubs()) {
+            HappyInfo happyInfo = maxHappy(sub);
+            list.add(happyInfo);
+        }
+        Integer sum = list.stream().map(HappyInfo::getHappy).reduce(Integer::sum).orElse(0);
+        HappyInfo info = new HappyInfo(0);
+        info.setHappySum(info.getHappySum() + Math.max(header.getHappy(), sum));
+        return info;
+    }
+
+
+    static class FullTreeInfo {
+        boolean is;
+
+        FullTreeInfo(boolean is) {
+            this.is = is;
+        }
+    }
+
+    private static FullTreeInfo fullTreeVertify(TreeItem<Integer> header) {
+        if (header == null) {
+            return new FullTreeInfo(false);
+        }
+        FullTreeInfo l = fullTreeVertify(header.getLeft());
+        FullTreeInfo r = fullTreeVertify(header.getRight());
+        FullTreeInfo fullTreeInfo = new FullTreeInfo(false);
+        if (header.getLeft() == null && header.getRight() == null) {
+            fullTreeInfo.is = true;
+        } else {
+            fullTreeInfo.is = l.is && r.is;
+        }
+        return fullTreeInfo;
+    }
+
+    private static TreeItem<Integer> minCommonAncetors(TreeItem<Integer> header, TreeItem<Integer> a, TreeItem<Integer> b) {
+        Map<TreeItem<Integer>, TreeItem<Integer>> map = new HashMap<>();
+        map.put(header, null);
+        process4(header, map);
+        Set<TreeItem<Integer>> set = new HashSet<>();
+        TreeItem<Integer> index = map.get(a);
+        while (index != null) {
+            set.add(index);
+            index = map.get(index);
+        }
+        index = map.get(b);
+        while (index != null) {
+            if (!set.add(index)) {
+                return index;
+            }
+            index = map.get(index);
+        }
+        return null;
+    }
+
+    private static void process4(TreeItem<Integer> header, Map<TreeItem<Integer>, TreeItem<Integer>> map) {
+        if (header == null) {
+            return;
+        }
+        process4(header.getLeft(), map);
+        if (header.getLeft() != null) {
+            map.put(header.getLeft(), header);
+        }
+        process4(header.getRight(), map);
+        if (header.getRight() != null) {
+            map.put(header.getRight(), header);
+        }
+    }
+
+
+    static class Ancetors {
+        boolean findO1;
+        boolean find02;
+        TreeItem<Integer> header;
+    }
+
+    private static TreeItem<Integer> minCommonAncetors2(TreeItem<Integer> header, TreeItem<Integer> a, TreeItem<Integer> b) {
+        return process5(header, a, b).header;
+    }
+
+    private static Ancetors process5(TreeItem<Integer> header, TreeItem<Integer> a, TreeItem<Integer> b) {
+        if (header == null) {
+            return new Ancetors();
+        }
+        Ancetors ancetorsL = process5(header.getLeft(), a, b);
+        Ancetors ancetorsR = process5(header.getRight(), a, b);
+        Ancetors ancetors = new Ancetors();
+        boolean find01 = header == a || ancetorsL.findO1 || ancetorsR.find02;
+        boolean find02 = header == b || ancetorsL.find02 || ancetorsR.find02;
+
+        if (ancetorsL.find02 && ancetorsL.findO1) {
+            ancetors.header = ancetorsL.header;
+        }
+
+        if (ancetorsR.find02 && ancetorsR.findO1) {
+            ancetors.header = ancetorsR.header;
+        }
+
+        if ((ancetors.header == null) && find01 && find02) {
+            ancetors.header = header;
+        }
+        return ancetors;
+    }
+
+
 
 }
