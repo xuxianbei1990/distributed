@@ -25,19 +25,25 @@ public class LightAndWall {
                 if (chars[i + 1] == '.') {
                     if (chars[i + 2] == '.') {
                         result++;
-                        i += 2;
+                        i += 3;
                     } else {
                         result++;
-                        i++;
+                        i += 3;
                     }
                 } else {
                     result++;
-                    i++;
+                    i += 2;
                 }
             } else {
                 i++;
             }
         }
         return result;
+    }
+
+
+    public static void main(String[] args) {
+        LightAndWall lightAndWall = new LightAndWall();
+        System.out.println(lightAndWall.execute("X.X.X..X...X.X....X..X"));
     }
 }
