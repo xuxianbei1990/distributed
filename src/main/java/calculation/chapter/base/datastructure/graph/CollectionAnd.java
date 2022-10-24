@@ -90,7 +90,18 @@ public class CollectionAnd<T> {
         Node maxNode = sizex > sizey ? nodex : nodey;
         Node minNode = sizex <= sizey ? nodex : nodey;
         parentMap.put(minNode, maxNode);
+        nodeSize.put(maxNode, sizex + sizey);
+        nodeSize.remove(minNode);
         return true;
+    }
+
+    public static void main(String[] args) {
+        CollectionAnd<Integer> collectionAnd = new CollectionAnd();
+        collectionAnd.add(3);
+        collectionAnd.add(4);
+        collectionAnd.add(5);
+        collectionAnd.union(3, 4);
+        System.out.println(collectionAnd.isSameSet(3, 4));
     }
 
 }

@@ -41,7 +41,7 @@ public class ProjectCostProfit {
         ChooseSort.practice(costProfitList, (a, b) -> a.cost > b.cost ? 1 : 0);
 
         int sumProject = 0;
-        while (sumProject <= maxProjectNum) {
+        while (sumProject < maxProjectNum) {
 
             Stack<CostProfit> costStack = new Stack<>();
             for (CostProfit cost : costProfitList) {
@@ -68,5 +68,10 @@ public class ProjectCostProfit {
             initMoney += profit.profit;
         }
         System.out.println(initMoney);
+    }
+
+    public static void main(String[] args) {
+        ProjectCostProfit projectCostProfit = new ProjectCostProfit();
+        projectCostProfit.execute(new int[]{1,2,3,30,12,14,5}, new int[]{2,4,5,7,1,6,3}, 4, 10);
     }
 }

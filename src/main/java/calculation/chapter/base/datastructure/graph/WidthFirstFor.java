@@ -27,15 +27,14 @@ public class WidthFirstFor {
         LinkedList<Node> linkedList = new LinkedList<>();
         Set<Node> nodeSet = new HashSet<>();
         linkedList.add(node);
+        nodeSet.add(node);
         while (!linkedList.isEmpty()) {
             Node node1 = linkedList.pop();
-            if (nodeSet.add(node)) {
-                System.out.println(node1);
-                if (!CollectionUtils.isEmpty(node1.getNexts())) {
-                    for (Node next : node1.getNexts()) {
-                        if (nodeSet.add(node)) {
-                            linkedList.add(next);
-                        }
+            System.out.println(node1);
+            if (!CollectionUtils.isEmpty(node1.getNexts())) {
+                for (Node next : node1.getNexts()) {
+                    if (nodeSet.add(node)) {
+                        linkedList.add(next);
                     }
                 }
             }

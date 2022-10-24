@@ -1,8 +1,10 @@
 package calculation.chapter.practise;
 
+import calculation.chapter.base.datastructure.graph.CollectionAnd;
 import calculation.chapter.base.datastructure.tree.MultiTreeHappy;
 import calculation.chapter.base.datastructure.tree.TreeItem;
 import calculation.chapter.base.link.Node;
+import calculation.chapter.two.MergeSort;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
@@ -10,6 +12,7 @@ import org.springframework.util.StringUtils;
 import serializable.Student;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: xuxianbei
@@ -1043,6 +1046,539 @@ public class CodeList {
         return ancetors;
     }
 
+    private static String minStr(String value) {
+        List<String> list = new ArrayList<>();
+        for (char c : value.toCharArray()) {
+            list.add(String.valueOf(c));
+        }
+        list.sort((a, b) -> a.getBytes()[0] >= b.getBytes()[0] ? 1 : -1);
+        return list.toString();
+    }
 
+    private static void minArrayStr(String[] value) {
+        /**
+         * 1.获取最大长度
+         * 2.填充值
+         * 3.排序
+         * 4.组合
+         */
+        int length = getMaxLength(value);
+        fillValue(value, length);
+        MergeSortStr(value);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String s : value) {
+            s = s.replace("0", "");
+            stringBuilder.append(s);
+        }
+        System.out.println(stringBuilder.toString());
+    }
+
+    private static void MergeSortStr(String[] value) {
+        String[] temp = new String[value.length];
+        process6(value, 0, value.length - 1, temp);
+    }
+
+    private static void process6(String[] value, int i, int length, String[] temp) {
+        if (i < length) {
+            int mid = (i + length) / 2;
+            process6(value, i, mid, temp);
+            process6(value, mid + 1, length, temp);
+            mergeStr(value, i, mid + 1, length, temp);
+        }
+    }
+
+    private static void mergeStr(String[] value, int left, int mid, int length, String[] temp) {
+        int p1 = left;
+        int p2 = mid;
+        int index = 0;
+        while (p1 < mid && p2 <= length) {
+            if (value[p1].compareTo(value[p2]) > 0) {
+                temp[index++] = value[p2++];
+            } else {
+                temp[index++] = value[p1++];
+            }
+        }
+
+        while (p1 < mid) {
+            temp[index++] = value[p1++];
+        }
+
+        while (p2 <= length) {
+            temp[index++] = value[p2++];
+        }
+        p1 = left;
+        index = 0;
+        while (p1 <= length) {
+            value[p1++] = temp[index++];
+        }
+    }
+
+    private static void fillValue(String[] value, int length) {
+        for (int i = 0; i < value.length; i++) {
+            if (value[i].length() < length) {
+                for (int j = value[i].length(); j < length; j++) {
+                    value[i] = value[i] + "0";
+                }
+            }
+        }
+    }
+
+    private static int getMaxLength(String[] value) {
+        Integer max = 0;
+        for (String s : value) {
+            max = Math.max(max, s.length());
+        }
+        return max;
+    }
+
+    private static void lightALamp(String value) {
+        String light = ".";
+        int i = 0;
+        int lightSum = 0;
+        while (i < value.length()) {
+            int scene = 0;
+            if (String.valueOf(value.toCharArray()[i]).equals(light)) {
+                scene = 1;
+                i++;
+                if (String.valueOf(value.toCharArray()[i]).equals(light)) {
+                    scene = 2;
+                    i++;
+                    if (String.valueOf(value.toCharArray()[i]).equals(light)) {
+                        scene = 3;
+                        i++;
+                    }
+                }
+            } else {
+                i++;
+            }
+            if (scene > 0) {
+                lightSum++;
+            }
+        }
+        System.out.println(lightSum);
+    }
+
+    static class MaxItemInfo {
+        int cost;
+        int profit;
+    }
+
+    private static void maxItem(int[] costs, int[] profit, int k, int m) {
+        List<MaxItemInfo> listCost = new ArrayList<>();
+        for (int i = 0; i < costs.length; i++) {
+            MaxItemInfo maxItemInfo = new MaxItemInfo();
+            maxItemInfo.cost = costs[i];
+            maxItemInfo.profit = profit[i];
+            listCost.add(maxItemInfo);
+        }
+        listCost.sort((a, b) -> a.cost > b.cost ? 1 : -1);
+        int items = 0;
+        while (items < k) {
+            List<MaxItemInfo> target = new ArrayList<>();
+            for (MaxItemInfo maxItemInfo : listCost) {
+                if (maxItemInfo.cost < m) {
+                    target.add(maxItemInfo);
+                }
+            }
+            target.sort((a, b) -> a.profit > b.profit ? -1 : 1);
+            MaxItemInfo itemInfo = target.get(0);
+            listCost.remove(itemInfo);
+            int profit1 = itemInfo.profit;
+            m = profit1 + m;
+            items++;
+        }
+        System.out.println(m);
+    }
+
+    static Map<Integer, Node> valueMap = new HashMap<>();
+    static Map<Node, Node> parentMap = new HashMap<>();
+    static Map<Node, Integer> sizeMap = new HashMap<>();
+
+    public static void add(Integer value) {
+        Node<Integer> node = new Node();
+        node.setData(value);
+        valueMap.put(value, node);
+        parentMap.put(node, node);
+        sizeMap.put(node, 1);
+    }
+
+    public static void union(Integer a, Integer b) {
+        Node node1 = valueMap.get(a);
+        Node node2 = valueMap.get(b);
+        if (node1 == null || node2 == null) {
+            return;
+        }
+        Integer size1 = sizeMap.get(node1);
+        Integer size2 = sizeMap.get(node2);
+        Node minNode = size1 <= size2 ? node1 : node2;
+        Node maxNode = size1 > size2 ? node1 : node2;
+        parentMap.put(minNode, maxNode);
+        sizeMap.put(maxNode, size1 + size2);
+        sizeMap.remove(minNode);
+    }
+
+    public static Node findFather(Node value) {
+        Node nodeIndex = parentMap.get(value);
+        while (nodeIndex != value) {
+            value = nodeIndex;
+            nodeIndex = parentMap.get(nodeIndex);
+        }
+        return nodeIndex;
+    }
+
+    public static boolean isSameSet(Integer a, Integer b) {
+        Node<Integer> nodeA = valueMap.get(a);
+        Node<Integer> nodeB = valueMap.get(b);
+        if (nodeA == null || nodeB == null) {
+            return false;
+        }
+        return findFather(nodeA) == findFather(nodeB);
+    }
+
+
+    static class GraphNode {
+        String value;
+        Integer in;
+        Integer out;
+        List<GraphNode> nexts;
+        List<GraphEdge> edges;
+
+        GraphNode(String value, Integer in, Integer out, List<GraphNode> nodes, List<GraphEdge> edges) {
+            this.value = value;
+            this.in = in;
+            this.out = out;
+            this.nexts = nodes;
+            this.edges = edges;
+        }
+    }
+
+    static class GraphEdge {
+        Integer weight;
+        GraphNode from;
+        GraphNode to;
+
+        GraphEdge(Integer weight, GraphNode from, GraphNode to) {
+            this.weight = weight;
+            this.from = from;
+            this.to = to;
+        }
+    }
+
+    private static void horizontalFor(GraphNode header) {
+        LinkedList<GraphNode> linkedList = new LinkedList<>();
+        Set<GraphNode> set = new HashSet<>();
+        set.add(header);
+        linkedList.push(header);
+        while (!linkedList.isEmpty()) {
+            GraphNode index = linkedList.pop();
+            System.out.println(index.value);
+            for (GraphNode next : index.nexts) {
+                if (set.add(next)) {
+                    linkedList.push(next);
+                }
+            }
+        }
+    }
+
+    private static void stackFor(GraphNode header) {
+        Stack<GraphNode> stack = new Stack<>();
+        Set<GraphNode> set = new HashSet<>();
+        stack.push(header);
+        set.add(header);
+        while (!stack.isEmpty()) {
+            GraphNode index = stack.pop();
+            System.out.println(index.value);
+            for (GraphNode next : index.nexts) {
+                if (set.add(next)) {
+                    stack.push(next);
+                }
+            }
+        }
+    }
+
+    private static void tuoputu(GraphNode header) {
+        /**
+         * 1.从第一个节点获取值，放入到list中。记A
+         * 2.遍历A。如果是In是0。从list中移除。记B
+         * 3.获取B所有的子节点。更新in--;
+         * 4.周而复始，直到list为空
+         */
+    }
+
+
+    private static void kruskal(List<GraphEdge> edges) {
+        edges.sort((a, b) -> a.weight > b.weight ? 1 : -1);
+        Set<GraphNode> set = new HashSet<>();
+        for (GraphEdge edge : edges) {
+            if (set.contains(edge.from) && set.contains(edge.to)) {
+                continue;
+            }
+            set.add(edge.from);
+            set.add(edge.to);
+            System.out.println(edge.weight);
+        }
+    }
+
+    private static void p(GraphNode node) {
+        Set<GraphNode> set = new HashSet<>();
+        GraphNode index = node;
+        while (index != null) {
+            List<GraphEdge> edges = index.edges;
+            GraphEdge edge = getMinEdge(edges);
+            if (set.add(edge.to)) {
+                System.out.println(edge.weight);
+                index = edge.to;
+            } else {
+                index = null;
+            }
+        }
+    }
+
+    private static GraphEdge getMinEdge(List<GraphEdge> edges) {
+        edges.sort((a, b) -> a.weight > b.weight ? 1 : -1);
+        return edges.get(0);
+    }
+
+    /**
+     * 1.指定一个点A。遍历循环列表C所有点到A距离。-1代表正无穷。记录距离最近的点B，其实就是A
+     * 2.剔除A,从余下的节点中找到距离A最近的距离的节点记为D， 距离记为D1
+     * 3.遍历循环列表C，规则 距离D的点的距离F，记点F1，取最小值： F+D1 和 F1 的距离做对比，取最小值。
+     * 4.依次以上遍历。
+     */
+    private static void minDistance(List<GraphNode> graphNodes, GraphNode nodeA) {
+        Map<GraphNode, Integer> map = new HashMap<>();
+        for (GraphNode graphNode : graphNodes) {
+            Integer distance = getDistance(graphNode, nodeA);
+            map.put(graphNode, distance);
+        }
+        GraphNode index = nodeA;
+        while (graphNodes.size() >= 1) {
+            graphNodes.remove(index);
+            GraphNode minIndex = getMinNode(graphNodes);
+            for (GraphNode graphNode : graphNodes) {
+                if (minIndex != graphNode) {
+                    Integer distance = getDistance(graphNode, minIndex);
+                    Integer distance2 = map.get(minIndex);
+                    Integer distance3 = map.get(graphNode);
+                    if (distance != -1 && distance2 != -1 && distance3 != -1) {
+                        if (distance2 + distance > distance3) {
+                            map.put(graphNode, distance3);
+                        }
+                    } else if (distance != -1) {
+                        map.put(graphNode, distance);
+                    }
+                }
+            }
+            index = minIndex;
+        }
+    }
+
+    private static GraphNode getMinNode(List<GraphNode> graphNodes) {
+        return null;
+    }
+
+    private static Integer getDistance(GraphNode graphNode, GraphNode nodeA) {
+        return null;
+    }
+
+    private static void minDistanceEx(List<GraphNode> graphNodes, GraphNode nodeA, GraphNode nodeB) {
+        Map<GraphNode, Integer> map = new HashMap<>();
+        for (GraphNode graphNode : graphNodes) {
+            Integer distance = getDistance(graphNode, nodeA);
+            map.put(graphNode, distance);
+        }
+
+        for (GraphNode graphNode : graphNodes) {
+            for (GraphNode node : graphNodes) {
+                if (graphNode == node) {
+                    continue;
+                }
+                Integer dis = getDistance(graphNode, node);
+                if (dis != -1) {
+                    Integer dis1 = map.get(graphNode);
+                    Integer dis2 = map.get(node);
+                    if (dis1 > -1 && dis2 > -1) {
+                        map.put(node, Math.min(dis + dis1, dis2));
+                    } else if (dis1 > -1) {
+                        map.put(node, dis + dis1);
+                    }
+                }
+            }
+        }
+        System.out.println(map.get(nodeB));
+    }
+
+
+    private static void hannuota(Integer storey) {
+        hannuota("A", "C", storey, storey);
+    }
+
+    private static void hannuota(String from, String to, Integer storey, Integer cur) {
+        if (storey == 1) {
+            if (from.equals("A") && to.equals("C")) {
+                System.out.println(storey + "A->B, B->C");
+            }
+            if (from.equals("C") && to.equals("A")) {
+                System.out.println(storey + "C->B, B->A");
+            }
+        } else if (storey == 2) {
+            storey--;
+            if (from.equals("A") && to.equals("C")) {
+                hannuota("A", "C", storey, cur);
+                System.out.println("2:A->B");
+                hannuota("A", "C", storey, cur);
+                System.out.println("2:B->C");
+                hannuota("A", "C", storey, cur);
+            }
+            if (from.equals("C") && to.equals("A")) {
+                hannuota("C", "A", storey, cur);
+                System.out.println("2:C->B");
+                hannuota("A", "C", storey, cur);
+                System.out.println("2:B->A");
+            }
+        } else {
+            storey--;
+            hannuota("A", "C", storey, cur);
+            System.out.println(cur + "A" + "->" + "B");
+            hannuota("C", "A", storey, cur);
+            System.out.println(cur + "B" + "->" + "C");
+            hannuota("A", "C", storey, cur);
+            cur--;
+        }
+    }
+
+    private static void hannuota2(String from, String to, String other, Integer storey) {
+        if (storey < 1) {
+            return;
+        }
+        if (storey == 1) {
+            System.out.println(storey + ":" + from + "->" + to + "->" + other);
+        } else {
+            hannuota2(from, to, other, storey - 1);
+            System.out.println(storey + ":" + from + "->" + to);
+            hannuota2(other, to, from, storey - 1);
+            System.out.println(storey + ":" + to + "->" + other);
+            hannuota2(from, to, other, storey - 1);
+        }
+    }
+
+    private static void printSon(String values) {
+        for (int i = 0; i < values.toCharArray().length; i++) {
+            for (int j = i + 1; j < values.length(); j++) {
+                System.out.println((new String(new char[]{values.toCharArray()[i]})) + values.substring(i + 1, j + 1));
+            }
+        }
+    }
+
+    private static void printAllSon(String value) {
+        List<String> ans = new ArrayList<>();
+        String path = "";
+        Integer index = 0;
+        process7(value.toCharArray(), ans, index, path);
+        System.out.println(ans);
+    }
+
+    private static void process7(char[] cs, List<String> ans, Integer index, String path) {
+        if (index == cs.length) {
+            ans.add(path);
+            return;
+        }
+        String trues = cs[index] + path;
+        process7(cs, ans, index + 1, trues);
+        String no = path;
+        process7(cs, ans, index + 1, no);
+    }
+
+
+    private static void printAllSort(String values) {
+        char[] chars = values.toCharArray();
+        for (int i = 1; i < chars.length; i++) {
+            char[] chars1 = new char[i];
+            processSort(chars, i, 0, -1, chars1);
+        }
+    }
+
+    private static void processSort(char[] chars, int num, int begin, int index, char[] chars1) {
+        if (num == 0) {
+            return;
+        }
+        num--;
+        index++;
+        for (int i1 = begin; i1 < chars.length; i1++) {
+            chars1[index] = chars[i1];
+            processSort(chars, num, i1 + 1, index, chars1);
+            if (num == 0) {
+                System.out.println(new String(chars1));
+            }
+        }
+    }
+
+    private static void printAll1(String values) {
+        List<String> ans = new ArrayList<>();
+        ans.add(values);
+        process8(values.toCharArray(), 0, ans);
+    }
+
+    private static void process8(char[] toCharArray, int index, List<String> ans) {
+        if (index >= toCharArray.length) {
+            return;
+        }
+        for (int i = 0; i < toCharArray.length; i++) {
+            if (index != i) {
+                String value = swap(index, i, toCharArray);
+                ans.add(value);
+            }
+        }
+        index++;
+        process8(toCharArray, index, ans);
+
+
+    }
+
+    private static String swap(int c, int i, char[] toCharArray) {
+        return "";
+    }
+
+    private static void process8compare(char[] str, int i, List<String> ans) {
+        if (i == str.length) {
+            ans.add(String.valueOf(str));
+        }
+        boolean[] visit = new boolean[26];
+        for (int j = i; j < str.length; j++) {
+            if (!visit[str[j] - 'a']) {
+                visit[str[j] - 'a'] = true;
+                swap(str, i, j);
+                process8compare(str, i + 1, ans);
+                swap(str, i, j);
+            }
+        }
+    }
+
+    private static void swap(char[] str, int i, int j) {
+        char c = str[i];
+        str[i] = str[j];
+        str[j] = c;
+    }
+
+    private static void unSortStack(Stack<Integer> stack) {
+        if (stack.isEmpty()) {
+            return;
+        }
+        Integer value = popLastOne(stack);
+        unSortStack(stack);
+        stack.push(value);
+    }
+
+
+    private static Integer popLastOne(Stack<Integer> stack) {
+        Integer value = stack.pop();
+        if (stack.isEmpty()) {
+            return value;
+        } else {
+            Integer value2 = popLastOne(stack);
+            stack.push(value);
+            return value2;
+        }
+    }
 
 }

@@ -39,7 +39,7 @@ public class HanNuoTa {
         HanNuoTa hanNuoTa = new HanNuoTa();
 //        hanNuoTa.execute(3, "A", "B", "C");
 //        hanNuoTa.printAllStringSon("abcdef");
-        hanNuoTa.printAllStringTogetherSon("abcdef");
+        hanNuoTa.printAllStringTogetherSon("abc");
     }
 
     //打印一个字符串的全部排列
