@@ -1,4 +1,4 @@
-package concurrent.program.studyJdk;
+package practice.studyJdk;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.TimeUnit;

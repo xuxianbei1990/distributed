@@ -1,4 +1,4 @@
-package concurrent.program.studyJdk;
+package practice.studyJdk;
 
 /**
  * @author: xuxianbei

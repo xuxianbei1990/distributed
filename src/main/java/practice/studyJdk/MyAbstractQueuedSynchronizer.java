@@ -1,4 +1,4 @@
-package concurrent.program.studyJdk;
+package practice.studyJdk;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;

@@ -1,4 +1,4 @@
-package concurrent.program.studyJdk;
+package practice.studyJdk;
 
 
 import java.lang.ref.WeakReference;
@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * ThreadLocal 是支持泛型
  * 其实就是一个key放到thread threadlocalmap 而这个map是key是弱应用，value是强应用, entry 是存在的
+ * 弱引用：GC就会被回收
  * 场景：GC的条件是，对象不可达。所以只有当threadLocal被频繁创建时候且没有remove才会造成内存泄漏, 如果是成员变量或者静态变量不会被GC
  *
  * @author: xuxianbei

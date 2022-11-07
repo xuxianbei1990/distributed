@@ -1,6 +1,6 @@
 package concurrent.program.synchronize;
 
-import concurrent.program.studyJdk.MyHashMap;
+import practice.studyJdk.MyHashMap;
 import lombok.SneakyThrows;
 
 import java.util.HashMap;

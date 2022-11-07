@@ -1,4 +1,4 @@
-package concurrent.program.studyJdk;
+package practice.studyJdk;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -232,11 +232,13 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
             long v;
             int m;
             boolean uncontended = true;
+            //一开始as == null 肯定是null
             if (as == null || (m = as.length - 1) < 0 ||
 
                     (a = as[MyThreadLocalRandom.getProbe() & m]) == null ||
                     !(uncontended =
                             U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))) {
+
                 fullAddCount(x, uncontended);
                 return;
             }
@@ -316,6 +318,8 @@ public class MyConcurrentHashMap<K, V> implements Serializable {
                     collide = false;            // At max size or stale
                 else if (!collide)
                     collide = true;
+
+                //应该是这里创建的
                 else if (cellsBusy == 0 &&
                         U.compareAndSwapInt(this, CELLSBUSY, 0, 1)) {
                     try {
