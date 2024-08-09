@@ -1,6 +1,7 @@
 package concurrent.program;
 
 import java.math.BigDecimal;
+
 //http://blog.csdn.net/ghsau/article/details/7433673
 class BankAccount {
 	String name;
@@ -61,10 +62,11 @@ class ThreadNofifyRun implements Runnable {
 }
 
 public class ThreadWaitNotifyDemo1 {
-	public static void main(String args[]) {
-		BankAccount bankAccout = new BankAccount();
-		new Thread(new ThreadWaitRun(bankAccout)).start();
-		new Thread(new ThreadNofifyRun(bankAccout)).start();
+	public static void main(String args[]) throws InterruptedException {
+//		BankAccount bankAccout = new BankAccount();
+//		new Thread(new ThreadWaitRun(bankAccout)).start();
+//		new Thread(new ThreadNofifyRun(bankAccout)).start();
+        System.out.println(3 | 1);
 	}
 
 }

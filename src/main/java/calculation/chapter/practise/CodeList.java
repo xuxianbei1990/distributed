@@ -23,6 +23,31 @@ import java.util.stream.Collectors;
 public class CodeList {
 
 
+    public int maxScore(int[] cards, int[] scores) {
+        return processScore(cards, scores, 0, 0,0,0);
+    }
+
+    public int processScore(int[] cards, int[] scores, int index, int hold, int cur, int next){
+        if (index == cards.length - 1){
+            if (hold + cards[index] * 3 + cur > scores[index]){
+                return hold + cards[index] * 3 + cur;
+            }
+            return -1;
+        }
+        int p1 = -1;
+        int sum = hold + cur + cards[index];
+        if (sum > scores[index]){
+           p1 = processScore(cards, scores, index + 1, hold + cards[index], next,0);
+        }
+        int p2 = -1;
+        sum = hold + cur + cards[index] * 3;
+        if (sum > scores[index]){
+            p2 = processScore(cards, scores, index + 1, hold , next + cards[index] * 3,cards[index] * 3);
+        }
+        return Math.max(p1, p2);
+    }
+
+
     private void code1(Node<Integer> header) {
         Node pred = null;
         Node next = null;

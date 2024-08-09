@@ -1,6 +1,5 @@
 package calculation.chapter.base.datastructure.tree;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Data;
 
 /**

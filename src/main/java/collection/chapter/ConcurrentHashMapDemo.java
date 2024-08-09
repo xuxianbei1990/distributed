@@ -33,7 +33,7 @@ public class ConcurrentHashMapDemo<K, V> {
     }
 
     private transient volatile int sizeCtl;
-    private static sun.misc.Unsafe U;
+
     private static long SIZECTL;
 
     /**
@@ -44,17 +44,7 @@ public class ConcurrentHashMapDemo<K, V> {
     private final Node<K, V>[] initTable() {
         Node<K, V>[] tab;
         int sc;
-        while ((tab = table) == null || tab.length == 0) {
-            if ((sc = sizeCtl) < 0) {
-                Thread.yield();
-                /**
-                 * 使用cas进行值的替换，替换内存, java无法直接操作内存，
-                 *
-                 */
-            } else if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
 
-            }
-        }
         return null;
     }
 
